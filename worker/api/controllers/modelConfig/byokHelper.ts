@@ -94,6 +94,7 @@ export function getPlatformEnabledProviders(env: Env): string[] {
 	const providerList = [
 		'anthropic',
 		'openai',
+		'openrouter',   
 		'google-ai-studio',
 		'cerebras',
 		'groq',
