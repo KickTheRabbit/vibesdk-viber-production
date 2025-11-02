@@ -9,6 +9,45 @@ import { ReasoningEffort } from "openai/resources.mjs";
 export enum AIModels {
     DISABLED = 'disabled',
 
+    // ============ GOOGLE GEMINI (via OpenRouter) ============
+    // Very popular, great price/performance!
+    OPENROUTER_GEMINI_2_5_FLASH = 'openrouter/google/gemini-2.5-flash',
+    OPENROUTER_GEMINI_2_5_FLASH_LITE = 'openrouter/google/gemini-2.5-flash-lite',
+    OPENROUTER_GEMINI_2_0_FLASH = 'openrouter/google/gemini-2.0-flash-001',
+    OPENROUTER_GEMINI_2_5_PRO = 'openrouter/google/gemini-2.5-pro',
+    
+    // ============ ANTHROPIC CLAUDE (via OpenRouter) ============
+    // Neueste Models!
+    OPENROUTER_CLAUDE_4_5_SONNET = 'openrouter/anthropic/claude-4.5-sonnet-20250929',
+    OPENROUTER_CLAUDE_4_SONNET = 'openrouter/anthropic/claude-4-sonnet-20250522',
+    OPENROUTER_CLAUDE_4_5_HAIKU = 'openrouter/anthropic/claude-4.5-haiku-20251001',
+    OPENROUTER_CLAUDE_4_OPUS = 'openrouter/anthropic/claude-4-opus-20250514',
+    
+    // ============ OPENAI GPT (via OpenRouter) ============
+    OPENROUTER_GPT_5 = 'openrouter/openai/gpt-5-2025-08-07',
+    OPENROUTER_GPT_5_MINI = 'openrouter/openai/gpt-5-mini-2025-08-07',
+    OPENROUTER_GPT_4_1 = 'openrouter/openai/gpt-4.1-2025-04-14',
+    OPENROUTER_GPT_4_1_MINI = 'openrouter/openai/gpt-4.1-mini-2025-04-14',
+    OPENROUTER_GPT_4O_MINI = 'openrouter/openai/gpt-4o-mini',
+    OPENROUTER_CHATGPT_4O = 'openrouter/openai/chatgpt-4o-latest',
+    
+    // ============ DEEPSEEK (via OpenRouter) ============
+    // Great for reasoning & debugging!
+    OPENROUTER_DEEPSEEK_V3 = 'openrouter/deepseek/deepseek-chat-v3-0324',
+    OPENROUTER_DEEPSEEK_R1 = 'openrouter/deepseek/deepseek-r1',
+    
+    // ============ QWEN CODER (via OpenRouter) ============
+    // EXCELLENT for coding tasks! 262K context!
+    OPENROUTER_QWEN3_CODER = 'openrouter/qwen/qwen3-coder-480b',
+    
+    // ============ X.AI GROK (via OpenRouter) ============
+    // #1 on OpenRouter for coding!
+    OPENROUTER_GROK_CODE_FAST = 'openrouter/x-ai/grok-code-fast-1',
+    
+    // ============ OTHER TOP MODELS ============
+    OPENROUTER_GLM_4_6 = 'openrouter/z-ai/glm-4.6',
+    OPENROUTER_KIMI_K2 = 'openrouter/moonshotai/kimi-k2',
+	
 	GEMINI_2_0_FLASH = 'google-ai-studio/gemini-2.0-flash',
 	GEMINI_2_5_PRO = 'google-ai-studio/gemini-2.5-pro',
 	GEMINI_2_5_FLASH = 'google-ai-studio/gemini-2.5-flash',
