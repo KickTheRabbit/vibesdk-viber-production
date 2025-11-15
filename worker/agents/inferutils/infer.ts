@@ -76,17 +76,19 @@ export async function executeInference<T extends z.AnyZodObject>(   {
 }): Promise<InferResponseString | InferResponseObject<T> | null> {
     let conf: ModelConfig | undefined;
     
-    if (modelConfig) {
-        // Use explicitly provided model config
-        conf = modelConfig;
-    } else if (context?.userId && context?.userModelConfigs) {
-        // Try to get user-specific configuration from context cache
+    // PRIORITY 1: User Settings from context (when available)
+    if (context?.userId && context?.userModelConfigs?.[agentActionName]) {
         conf = context.userModelConfigs[agentActionName];
-        if (conf) {
-            logger.info(`Using user configuration for ${agentActionName}: ${JSON.stringify(conf)}`);
-        } else {
-            logger.info(`No user configuration for ${agentActionName}, using AGENT_CONFIG defaults`);
-        }
+        logger.info`Using user configuration for ${agentActionName}: ${JSON.stringify(conf)}`;
+    } 
+    // PRIORITY 2: Explicitly provided model config
+    else if (modelConfig) {
+        conf = modelConfig;
+        logger.info`Using provided model config for ${agentActionName}`;
+    } 
+    // PRIORITY 3: Fall back to AGENT_CONFIG defaults
+    else {
+        logger.info`No user configuration for ${agentActionName}, using AGENT_CONFIG defaults`;
     }
 
     // Use the final config or fall back to AGENT_CONFIG defaults
