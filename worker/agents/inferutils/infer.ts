@@ -79,16 +79,16 @@ export async function executeInference<T extends z.AnyZodObject>(   {
     // PRIORITY 1: User Settings from context (when available)
     if (context?.userId && context?.userModelConfigs?.[agentActionName]) {
         conf = context.userModelConfigs[agentActionName];
-        logger.info`Using user configuration for ${agentActionName}: ${JSON.stringify(conf)}`;
+        logger.info(`Using user configuration for ${agentActionName}: ${JSON.stringify(conf)}`);
     } 
     // PRIORITY 2: Explicitly provided model config
     else if (modelConfig) {
         conf = modelConfig;
-        logger.info`Using provided model config for ${agentActionName}`;
+        logger.info(`Using provided model config for ${agentActionName}`);
     } 
     // PRIORITY 3: Fall back to AGENT_CONFIG defaults
     else {
-        logger.info`No user configuration for ${agentActionName}, using AGENT_CONFIG defaults`;
+        logger.info(`No user configuration for ${agentActionName}, using AGENT_CONFIG defaults`);
     }
 
     // Use the final config or fall back to AGENT_CONFIG defaults
