@@ -84,7 +84,7 @@ export const DEFAULT_RATE_LIMIT_SETTINGS: RateLimitSettings = {
 		limit: 10000,
 		period: 60 * 60, // 1 hour
         dailyLimit: 100000,
-		excludeBYOKUsers: false,
+		excludeBYOKUsers: true,
 	},
 };
 
