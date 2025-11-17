@@ -7,6 +7,7 @@ import { BaseController } from '../baseController';
 import { RouteContext } from '../../types/route-context';
 import { ApiResponse, ControllerResponse } from '../types';
 import { ModelConfigService } from '../../../database/services/ModelConfigService';
+import { updateUserAgentsModelConfigs } from '../../../services/agent-config-updater';
 import { SecretsService } from '../../../database/services/SecretsService';
 import { ModelTestService } from '../../../database/services/ModelTestService';
 import { 
@@ -196,7 +197,14 @@ export class ModelConfigController extends BaseController {
                 modelConfig
             );
 
-            const responseData: ModelConfigUpdateData = {
+            // Update all running agents with fresh configs
+            try {
+                await updateUserAgentsModelConfigs(user.id, env);
+            } catch (error) {
+                this.logger.error('Failed to update running agents:', error);
+                // Don't fail the request if agent update fails
+            }
+			const responseData: ModelConfigUpdateData = {
                 config: updatedConfig,
                 message: 'Model configuration updated successfully'
             };
