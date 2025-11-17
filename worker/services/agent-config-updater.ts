@@ -7,6 +7,7 @@ import { getAgentStub } from '../agents/index';
 import { ModelConfigService } from '../database/services/ModelConfigService';
 import { AppService } from '../database/services/AppService';
 import { createLogger } from '../logger';
+import type { CodeGenState } from '../agents/core/state';
 
 const logger = createLogger('AgentConfigUpdater');
 
@@ -26,12 +27,13 @@ export async function updateUserAgentsModelConfigs(
         
         // 2. Find all apps (agents) for this user
         const appService = new AppService(env);
-        const userApps = await appService.getUserApps(userId);
+        const userApps = await appService.getUserAppsWithFavorites(userId, { limit: 1000 });
         
         logger.info(`Found ${userApps.length} agents for user ${userId}`);
         
         // 3. Update each agent's state
-        const updatePromises = userApps.map(async (app) => {
+        const updatePromises = userApps.map(async (appData) => {
+   			const app = appData.app;
             try {
                 const agentStub = await getAgentStub(env, app.id, true, logger);
                 
