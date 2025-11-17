@@ -7,7 +7,6 @@ import { getAgentStub } from '../agents/index';
 import { ModelConfigService } from '../database/services/ModelConfigService';
 import { AppService } from '../database/services/AppService';
 import { createLogger } from '../logger';
-import type { CodeGenState } from '../agents/core/state';
 
 const logger = createLogger('AgentConfigUpdater');
 
@@ -33,18 +32,17 @@ export async function updateUserAgentsModelConfigs(
         
         // 3. Update each agent's state
         const updatePromises = userApps.map(async (appData) => {
-   			const app = appData.app;
-            try {
-                const agentStub = await getAgentStub(env, app.id, true, logger);
+		    try {
+		        const agentStub = await getAgentStub(env, appData.id, true, logger);
                 
                 // Check if agent is initialized
                 if (!await agentStub.isInitialized()) {
-                    logger.info(`Agent ${app.id} not initialized, skipping`);
+                    logger.info(`Agent ${appData.id} not initialized, skipping`);
                     return;
                 }
                 
                 // Get current state
-                const currentState = await agentStub.getFullState();
+                const currentState = await agentStub.getFullState() as any;
                 
                 // Update only the userModelConfigs in inferenceContext
                 const updatedState = {
@@ -69,9 +67,9 @@ export async function updateUserAgentsModelConfigs(
                 // Set the updated state
                 await agentStub.setState(updatedState);
                 
-                logger.info(`Updated agent ${app.id} with fresh model configs`);
+                logger.info(`Updated agent ${appData.id} with fresh model configs`);
             } catch (error) {
-                logger.error(`Failed to update agent ${app.id}:`, error);
+                logger.error(`Failed to update agent ${appData.id}:`, error);
                 // Continue with other agents even if one fails
             }
         });
