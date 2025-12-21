@@ -1,63 +1,79 @@
-# 💰 Money Tracker v12
+# 💰 MONEY TRACKER v21 - OPENROUTER METADATA
 
-## 🔧 FIXED: TypeScript Type Errors!
+## 🎯 WAS IST v21?
 
-**Problem in v11:** 
-- `agentActionName: agentActionName` (variable) → TypeScript erwartet literalen Key ❌
-- `agentActionName` nicht definiert bei projectSetup ❌
+**OpenRouter Metadata im Request Body statt Header!**
 
-**Fixed in v12:** 
-- Ternary operator direkt: `agentActionName: isFirst ? "firstPhaseImplementation" : "phaseImplementation"` ✅
-- Alle action names sind jetzt literal strings ✅
-
----
-
-## 📦 11 FILES - ALL WORKING:
-
-### Operations (7):
-1. PhaseGeneration.ts
-2. **PhaseImplementation.ts** (TYPE FIXED!)
-3. UserConversationProcessor.ts
-4. CodeReview.ts
-5. FastCodeFixer.ts
-6. ScreenshotAnalysis.ts
-7. FileRegeneration.ts
-
-### Planning (2):
-8. blueprint.ts
-9. templateSelector.ts
-
-### Assistants (2):
-10. projectsetup.ts
-11. **realtimeCodeFixer.ts** (TYPE FIXED!)
+Jetzt sollte in OpenRouter Dashboard die "App" Column gefüllt sein mit:
+- blueprint
+- phaseGeneration
+- projectSetup
+- etc.
 
 ---
 
-## 🎯 ALLE 12 AGENT ACTIONS:
+## 📦 ÄNDERUNG:
 
-1. templateSelection ✅
-2. blueprint ✅
-3. projectSetup ✅
-4. phaseGeneration ✅
-5. firstPhaseImplementation ✅
-6. phaseImplementation ✅
-7. realtimeCodeFixer ✅
-8. fastCodeFixer ✅
-9. conversationalResponse ✅
-10. codeReview ✅
-11. fileRegeneration ✅
-12. screenshotAnalysis ✅
+### worker/agents/inferutils/core.ts (Line ~548)
+
+**VORHER (v12):**
+```typescript
+response = await client.chat.completions.create({
+    model: modelName,
+    messages: [...],
+    // ... kein metadata im body
+}, {
+    headers: {
+        "cf-aig-metadata": JSON.stringify({ actionKey, ... })
+    }
+});
+```
+
+**NACHHER (v21):**
+```typescript
+response = await client.chat.completions.create({
+    model: modelName,
+    messages: [...],
+    // OpenRouter metadata - visible in dashboard!
+    metadata: {
+        action: actionKey,  // ← blueprint, phaseGeneration, etc
+        chatId: metadata.agentId,
+        userId: metadata.userId,
+        schemaName: schemaName || 'none'
+    }
+}, {
+    headers: {
+        "cf-aig-metadata": JSON.stringify({ ... })  // Bleibt für Cloudflare
+    }
+});
+```
 
 ---
 
-## 🚀 DEPLOYMENT:
+## 🧪 TEST:
 
-1. Upload alle 11 Files
-2. Deploy (NOW IT SHOULD WORK!)
-3. Test: "build todo app"
-4. Console: `[TRACKING]`
-5. Money Flow Tracker: Count events
+1. Deploy v21
+2. Neues Projekt erstellen
+3. **OpenRouter Dashboard → Activity**
+4. **Check "App" Column**
+
+**Du solltest sehen:**
+```
+App: blueprint
+App: phaseGeneration
+App: projectSetup
+...
+```
 
 ---
 
-**Third time's the charm! 🍀**
+## ✅ WENN DAS FUNKTIONIERT:
+
+Dann können wir im nächsten Schritt den Money Flow Tracker bauen der die OpenRouter API ausliest und die Kosten pro "action" anzeigt!
+
+---
+
+**Version:** v21  
+**Date:** 2024-12-21  
+**Purpose:** OpenRouter Metadata Tags sichtbar machen  
+**Files:** 1 (core.ts)

@@ -555,7 +555,14 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
                 stream: stream ? true : false,
                 reasoning_effort,
                 temperature,
-            }, {
+                // OpenRouter metadata - visible in dashboard!
+                metadata: {
+                    action: actionKey,
+                    chatId: metadata.agentId,
+                    userId: metadata.userId,
+                    schemaName: schemaName || 'none'
+                }
+            } as any, {
                 headers: {
                     "cf-aig-metadata": JSON.stringify({
                         chatId: metadata.agentId,
