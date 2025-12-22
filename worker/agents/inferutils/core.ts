@@ -555,12 +555,11 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
                 stream: stream ? true : false,
                 reasoning_effort,
                 temperature,
+                user: actionKey || 'unknown',  // OpenRouter tracks this as external_user!
             }, {
                 headers: {
-                    // OpenRouter App ID - UNIQUE per action!
-                    "HTTP-Referer": `https://vibesdk.com/${actionKey || 'unknown'}`,
-                    "X-Title": `VibeSDK: ${actionKey || 'unknown'}`,
-                    // Cloudflare AI Gateway metadata
+                    "HTTP-Referer": "https://vibesdk.com",
+                    "X-Title": "VibeSDK",
                     "cf-aig-metadata": JSON.stringify({
                         chatId: metadata.agentId,
                         userId: metadata.userId,
