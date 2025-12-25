@@ -3,8 +3,6 @@
  * Fetches generation data from OpenRouter API using server-side API key
  */
 
-import type { Context } from 'hono';
-
 interface MoneyFlowEvent {
     action: string;
     cost: number;
@@ -17,12 +15,15 @@ interface MoneyFlowEvent {
  * GET /api/money-flow-events
  * Returns recent OpenRouter generations with external_user tags
  */
-export async function getMoneyFlowEvents(c: Context): Promise<Response> {
+export async function getMoneyFlowEvents(
+    request: Request,
+    env: Env
+): Promise<Response> {
     try {
-        const apiKey = c.env.OPENROUTER_API_KEY;
+        const apiKey = env.OPENROUTER_API_KEY;
         
         if (!apiKey) {
-            return c.json({ error: 'OpenRouter API key not configured' }, 500);
+            return Response.json({ error: 'OpenRouter API key not configured' }, { status: 500 });
         }
 
         // Fetch from OpenRouter API
@@ -36,7 +37,12 @@ export async function getMoneyFlowEvents(c: Context): Promise<Response> {
         );
 
         if (!response.ok) {
-            throw new Error(`OpenRouter API error: ${response.statusText}`);
+            const errorText = await response.text();
+            console.error('[MoneyFlow] OpenRouter API error:', response.status, errorText);
+            return Response.json({ 
+                error: 'OpenRouter API error', 
+                details: errorText 
+            }, { status: 500 });
         }
 
         const data: any = await response.json();
@@ -53,10 +59,13 @@ export async function getMoneyFlowEvents(c: Context): Promise<Response> {
                 timestamp: new Date(g.created_at).toLocaleTimeString(),
             }));
 
-        return c.json(events);
+        return Response.json(events);
         
     } catch (error) {
         console.error('[MoneyFlow] Error fetching events:', error);
-        return c.json({ error: 'Failed to fetch money flow events' }, 500);
+        return Response.json({ 
+            error: 'Failed to fetch money flow events',
+            details: error instanceof Error ? error.message : String(error)
+        }, { status: 500 });
     }
 }

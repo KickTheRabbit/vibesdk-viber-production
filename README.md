@@ -1,4 +1,4 @@
-# v26 - Money Tracker (TypeScript Fixed)
+# v27 - Money Tracker (Env Access Fixed)
 
 ## Upload Instructions:
 
