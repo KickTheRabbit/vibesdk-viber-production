@@ -1,4 +1,4 @@
-# v25 - Money Tracker
+# v26 - Money Tracker (TypeScript Fixed)
 
 ## Upload Instructions:
 

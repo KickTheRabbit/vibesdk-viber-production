@@ -4,7 +4,6 @@
  */
 
 import type { Context } from 'hono';
-import type { RouteContext } from '../types/route-context';
 
 interface MoneyFlowEvent {
     action: string;
@@ -18,7 +17,7 @@ interface MoneyFlowEvent {
  * GET /api/money-flow-events
  * Returns recent OpenRouter generations with external_user tags
  */
-export async function getMoneyFlowEvents(c: Context<RouteContext>): Promise<Response> {
+export async function getMoneyFlowEvents(c: Context): Promise<Response> {
     try {
         const apiKey = c.env.OPENROUTER_API_KEY;
         
@@ -40,7 +39,7 @@ export async function getMoneyFlowEvents(c: Context<RouteContext>): Promise<Resp
             throw new Error(`OpenRouter API error: ${response.statusText}`);
         }
 
-        const data = await response.json();
+        const data: any = await response.json();
         const generations = data.data || [];
         
         // Filter and map to MoneyFlowEvent format
