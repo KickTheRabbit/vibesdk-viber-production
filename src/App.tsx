@@ -5,8 +5,12 @@ import { ThemeProvider } from './contexts/theme-context';
 import { Toaster } from './components/ui/sonner';
 import { AppLayout } from './components/layout/app-layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { useOpenRouterMoneyFlow } from './hooks/useOpenRouterMoneyFlow';
 
 export default function App() {
+  // Money Flow Tracker - uses backend endpoint (no API key needed in frontend)
+  useOpenRouterMoneyFlow();
+  
   return (
     <ErrorBoundary>
       <ThemeProvider>
