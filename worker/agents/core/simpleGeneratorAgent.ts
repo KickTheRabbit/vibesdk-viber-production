@@ -8,7 +8,7 @@ import {
 } from '../schemas';
 import { GitHubPushRequest, PreviewType, StaticAnalysisResponse, TemplateDetails } from '../../services/sandbox/sandboxTypes';
 import {  GitHubExportResult } from '../../services/github/types';
-import { CodeGenState, CurrentDevState, MAX_PHASES, FileState, CostTrackingEvent } from './state';
+import { CodeGenState, CurrentDevState, MAX_PHASES, FileState } from './state';
 import { AllIssues, AgentSummary, AgentInitArgs, PhaseExecutionResult, UserContext } from './types';
 import { MAX_DEPLOYMENT_RETRIES, PREVIEW_EXPIRED_ERROR, WebSocketMessageResponses } from '../constants';
 import { broadcastToConnections, handleWebSocketClose, handleWebSocketMessage } from './websocket';
@@ -331,37 +331,6 @@ export class SimpleCodeGeneratorAgent extends Agent<Env, CodeGenState> {
         return this.state;
     }
 
-    /**
-     * Broadcast cost tracking event to all WebSocket connections
-     * and update the session cost totals in state
-     */
-    broadcastCostEvent(event: CostTrackingEvent) {
-        // Send to all connected clients
-        this.broadcast(WebSocketMessageResponses.MONEY_FLOW_EVENT, event);
-        
-        // Initialize cost tracking state if not exists
-        if (!this.state.costTracking) {
-            this.state.costTracking = {
-                sessionTotal: 0,
-                events: [],
-                lastEventId: ''
-            };
-        }
-        
-        // Update session totals
-        this.state.costTracking.sessionTotal += event.cost.totalCost;
-        this.state.costTracking.events.push(event);
-        this.state.costTracking.lastEventId = event.id;
-        
-        // Log for debugging
-        this.logger().info('Cost event broadcasted', {
-            action: event.action,
-            model: event.model,
-            cost: event.cost.totalCost,
-            tokens: event.tokens.total,
-            sessionTotal: this.state.costTracking.sessionTotal
-        });
-    }
 
     async isInitialized() {
         return this.getAgentId() ? true : false
