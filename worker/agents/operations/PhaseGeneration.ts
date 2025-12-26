@@ -219,7 +219,6 @@ export class PhaseGenerationOperation extends AgentOperation<PhaseGenerationInpu
                 context: options.inferenceContext,
                 reasoning_effort: (userContext?.suggestions || issues.runtimeErrors.length > 0) ? AGENT_CONFIG.phaseGeneration.reasoning_effort == 'low' ? 'medium' : 'high' : undefined,
                 format: 'markdown',
-                onCostEvent: (event) => options.agent.broadcastCostEvent(event)
             });
     
             logger.info(`Generated next phase: ${results.name}, ${results.description}`);
