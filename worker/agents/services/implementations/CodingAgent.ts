@@ -1,6 +1,5 @@
 import { ProcessedImageAttachment } from "worker/types/image-attachment";
 import { ICodingAgent } from "../interfaces/ICodingAgent";
-import { CostTrackingEvent } from "../../core/state";
 
 /*
 * CodingAgentInterface - stub for passing to tool calls
@@ -37,7 +36,4 @@ export class CodingAgentInterface {
         this.agentStub.queueUserRequest(request, images);
     }
 
-    broadcastCostEvent(event: CostTrackingEvent): void {
-        this.agentStub.broadcastCostEvent(event);
-    }
 }
