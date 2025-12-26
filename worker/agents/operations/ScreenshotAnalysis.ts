@@ -106,7 +106,6 @@ export class ScreenshotAnalysisOperation extends AgentOperation<ScreenshotAnalys
                 agentActionName: 'screenshotAnalysis',
                 context: options.inferenceContext,
                 retryLimit: 3,
-                onCostEvent: (event) => options.agent.broadcastCostEvent(event),
             });
     
             if (!analysisResult) {
