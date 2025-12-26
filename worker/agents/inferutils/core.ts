@@ -23,7 +23,6 @@ import { SecurityError, RateLimitExceededError } from 'shared/types/errors';
 import { executeToolWithDefinition } from '../tools/customTools';
 import { RateLimitType } from 'worker/services/rate-limit/config';
 import { MAX_LLM_MESSAGES, MAX_TOOL_CALLING_DEPTH } from '../constants';
-import { CostTrackingEvent } from '../core/state';
 
 function optimizeInputs(messages: Message[]): Message[] {
     return messages.map((message) => ({
@@ -320,7 +319,6 @@ type InferArgsBase = {
     tools?: ToolDefinition<any, any>[];
     providerOverride?: 'cloudflare' | 'direct';
     userApiKeys?: Record<string, string>;
-    onCostEvent?: (event: CostTrackingEvent) => void;
 };
 
 type InferArgsStructured = InferArgsBase & {
@@ -430,7 +428,6 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
     tools,
     reasoning_effort,
     temperature,
-    onCostEvent,
 }: InferArgsBase & {
     schema?: OutputSchema;
     schemaName?: string;
@@ -669,42 +666,6 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
             // Also print the total number of tokens used in the prompt
             const totalTokens = (response as OpenAI.ChatCompletion).usage?.total_tokens;
             console.log(`Total tokens used in prompt: ${totalTokens}`);
-            
-            // Track cost and broadcast event if callback provided
-            const usage = (response as OpenAI.ChatCompletion).usage;
-            if (usage && actionKey && onCostEvent) {
-                const { calculateCost } = await import('./costTracking');
-                const costData = calculateCost(usage, modelName);
-                
-                // Create cost tracking event
-                const costEvent: CostTrackingEvent = {
-                    id: `cost_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                    timestamp: new Date().toISOString(),
-                    action: actionKey as AgentActionKey,
-                    model: modelName,
-                    tokens: {
-                        prompt: usage.prompt_tokens,
-                        completion: usage.completion_tokens,
-                        total: usage.total_tokens
-                    },
-                    cost: {
-                        totalCost: costData.cost,
-                        inputCost: costData.breakdown.inputCost,
-                        outputCost: costData.breakdown.outputCost
-                    },
-                    breakdown: [],
-                    duration: 0,
-                    context: ''
-                };
-                
-                // Call callback to broadcast event
-                onCostEvent(costEvent);
-                
-                // Log for debugging
-                console.log(`[COST_TRACKING] Action: ${actionKey}, Model: ${modelName}, Cost: $${costData.cost.toFixed(4)}`, {
-                    tokens: { prompt: usage.prompt_tokens, completion: usage.completion_tokens, total: usage.total_tokens }
-                });
-            }
         }
 
         if (!content && !stream && !toolCalls.length) {
