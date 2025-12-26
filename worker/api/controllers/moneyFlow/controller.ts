@@ -16,7 +16,7 @@ interface MoneyFlowEvent {
  * Returns recent OpenRouter generations with external_user tags
  */
 export async function getMoneyFlowEvents(
-    request: Request,
+    _request: Request,
     env: Env
 ): Promise<Response> {
     try {
