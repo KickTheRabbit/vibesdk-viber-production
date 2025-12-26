@@ -220,7 +220,6 @@ export class CodeReviewOperation extends AgentOperation<CodeReviewInputs, CodeRe
                 agentActionName: "codeReview",
                 context: options.inferenceContext,
                 reasoning_effort: issues.runtimeErrors.length || issues.staticAnalysis.lint.issues.length || issues.staticAnalysis.typecheck.issues.length > 0 ? undefined : 'low',
-                onCostEvent: (event) => options.agent.broadcastCostEvent(event),
                 // format: 'markdown'
             });
 
