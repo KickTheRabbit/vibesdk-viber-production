@@ -1,5 +1,6 @@
 # v28 - Money Tracker (Unused Variable Fixed)
 
+
 ## Upload Instructions:
 
 1. Download & entpacke `vibesdk-v25-changes.zip`
