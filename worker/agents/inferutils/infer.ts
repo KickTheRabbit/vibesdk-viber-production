@@ -9,7 +9,6 @@ import { AGENT_CONFIG } from './config';
 import { createLogger } from '../../logger';
 import { RateLimitExceededError, SecurityError } from 'shared/types/errors';
 import { ToolDefinition } from '../tools/types';
-import { CostTrackingEvent } from '../core/state';
 
 const logger = createLogger('InferenceUtils');
 
@@ -40,7 +39,6 @@ interface InferenceParamsBase {
     reasoning_effort?: ReasoningEffort;
     modelConfig?: ModelConfig;
     context: InferenceContext;
-    onCostEvent?: (event: CostTrackingEvent) => void;
 }
 
 interface InferenceParamsStructured<T extends z.AnyZodObject> extends InferenceParamsBase {
@@ -71,8 +69,7 @@ export async function executeInference<T extends z.AnyZodObject>(   {
     format,
     modelName,
     modelConfig,
-    context,
-    onCostEvent
+    context
 }: InferenceParamsBase &    {
     schema?: T;
     format?: SchemaFormat;
@@ -128,7 +125,6 @@ export async function executeInference<T extends z.AnyZodObject>(   {
                 stream,
                 reasoning_effort: useCheaperModel ? undefined : reasoning_effort,
                 temperature,
-                onCostEvent,
             }) : await infer({
                 env,
                 metadata: context,
@@ -140,7 +136,6 @@ export async function executeInference<T extends z.AnyZodObject>(   {
                 actionKey: agentActionName,
                 reasoning_effort: useCheaperModel ? undefined : reasoning_effort,
                 temperature,
-                onCostEvent,
             });
             logger.info(`Successfully completed ${agentActionName} operation`);
             // console.log(result);
