@@ -96,7 +96,6 @@ export class FastCodeFixerOperation extends AgentOperation<FastCodeFixerInputs, 
             messages,
             agentActionName: "fastCodeFixer",
             context: options.inferenceContext,
-            onCostEvent: (event) => options.agent.broadcastCostEvent(event),
         });
 
         const files = codeGenerationFormat.deserialize(result.string);
