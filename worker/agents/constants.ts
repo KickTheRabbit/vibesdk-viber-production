@@ -68,9 +68,6 @@ export const WebSocketMessageResponses: Record<string, WebSocketMessageType> = {
     // Terminal messages
     TERMINAL_OUTPUT: 'terminal_output',
     SERVER_LOG: 'server_log',
-    
-    // Money Flow Tracker
-    MONEY_FLOW_EVENT: 'money_flow_event',
 }
 
 // WebSocket message types
