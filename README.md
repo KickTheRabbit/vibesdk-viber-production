@@ -1,31 +1,32 @@
-# v28 - Money Tracker (Unused Variable Fixed)
+# VibeSDK v31 - Build Fix
 
+## Was ist drin:
 
-## Upload Instructions:
+**2 Files die du auf GitHub ersetzen musst:**
 
-1. Download & entpacke `vibesdk-v25-changes.zip`
-2. Geh zu GitHub: `KickTheRabbit/vibesdk-viber-production`
-3. Drag & Drop ALLE Ordner (src, worker) auf GitHub
-4. GitHub fragt: "Replace existing files?" → JA
-5. Commit message: "v25 - Money Tracker"
-6. Commit!
+1. `src/routes/chat/chat.tsx`
+2. `worker/agents/core/state.ts`
 
-**Cloudflare deployt automatisch!**
+## Installation:
 
-## Was passiert:
+Öffne jedes File in GitHub und ersetze den Inhalt:
 
-- 3 neue Files werden erstellt
-- 3 bestehende Files werden ersetzt
-- Alles landet automatisch an der richtigen Stelle
+### 1. src/routes/chat/chat.tsx
+- GitHub öffnen → File öffnen → Edit (Stift) → Alles löschen → Neuen Inhalt reinkopieren → Commit
 
-## Test:
+### 2. worker/agents/core/state.ts  
+- GitHub öffnen → File öffnen → Edit (Stift) → Alles löschen → Neuen Inhalt reinkopieren → Commit
 
-Nach Deploy → App öffnen → Browser Console (F12):
+## Was wurde gefixt:
 
-```
-[MoneyFlow] 🚀 Starting Money Flow fetch...
-[MoneyFlow] ✅ Fetched 12 events!
-[MoneyFlow] 💰 Total Cost: $0.0121
-```
+### chat.tsx
+- ❌ MoneyFlow Imports entfernt
+- ❌ moneyFlowState entfernt
+- ❌ money_flow_event Handler entfernt
+- ❌ MoneyFlowTracker Component entfernt
+- ✅ Fehlende Klammer gefixt (Zeile 184)
 
-**Fertig!** 🎉
+### state.ts
+- ❌ Unused AgentActionKey Import entfernt
+
+Dann sollte der Build laufen! ✅
