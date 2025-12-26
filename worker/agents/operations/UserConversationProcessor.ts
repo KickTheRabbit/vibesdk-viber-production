@@ -328,7 +328,6 @@ export class UserConversationProcessor extends AgentOperation<UserConversationIn
                     },
                     chunk_size: CHUNK_SIZE
                 },
-                onCostEvent: (event) => options.agent.broadcastCostEvent(event)
             });
 
             
@@ -550,7 +549,6 @@ Provide the summary now:`
                 messages: [...messages, summarizationInstruction],
                 agentActionName: 'conversationalResponse',
                 context: options.inferenceContext,
-                onCostEvent: (event) => options.agent.broadcastCostEvent(event)
             });
 
             const summary = summaryResult.string.trim();
