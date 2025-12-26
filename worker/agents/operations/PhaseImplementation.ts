@@ -494,7 +494,6 @@ export class PhaseImplementationOperation extends AgentOperation<PhaseImplementa
             context: options.inferenceContext,
             messages,
             modelConfig,
-            onCostEvent: (event) => options.agent.broadcastCostEvent(event),
             stream: {
                 chunk_size: 256,
                 onChunk: (chunk: string) => {
@@ -588,7 +587,6 @@ export class PhaseImplementationOperation extends AgentOperation<PhaseImplementa
                 messages,
                 agentActionName: "projectSetup",
                 context: options.inferenceContext,
-                onCostEvent: (event) => options.agent.broadcastCostEvent(event)
             });
 
             if (!results || !results.string) {
