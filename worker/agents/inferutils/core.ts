@@ -666,6 +666,38 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
             // Also print the total number of tokens used in the prompt
             const totalTokens = (response as OpenAI.ChatCompletion).usage?.total_tokens;
             console.log(`Total tokens used in prompt: ${totalTokens}`);
+            
+            // Track cost and broadcast via WebSocket
+            const usage = (response as OpenAI.ChatCompletion).usage;
+            if (usage && actionKey && metadata?.agentId) {
+                try {
+                    const { calculateCost } = await import('./costTracking');
+                    const costData = calculateCost(usage, modelName);
+                    
+                    // Broadcast cost event via worker broadcast
+                    const costEvent = {
+                        type: 'money_flow_event' as const,
+                        id: `cost_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                        timestamp: Date.now(),
+                        action: actionKey,
+                        model: modelName,
+                        tokens: {
+                            prompt: usage.prompt_tokens,
+                            completion: usage.completion_tokens,
+                            total: usage.total_tokens
+                        },
+                        cost: costData.cost
+                    };
+                    
+                    // Use env.AGENTS to get the agent and broadcast
+                    const agentStub = env.AGENTS.get(env.AGENTS.idFromName(metadata.agentId));
+                    await agentStub.broadcast('money_flow_event', costEvent);
+                    
+                    console.log(`[COST] ${actionKey}: $${costData.cost.toFixed(4)} | ${modelName} | ${usage.total_tokens} tokens`);
+                } catch (error) {
+                    console.error('[COST_TRACKING_ERROR]', error);
+                }
+            }
         }
 
         if (!content && !stream && !toolCalls.length) {
