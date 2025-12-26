@@ -29,39 +29,6 @@ export enum CurrentDevState {
 
 export const MAX_PHASES = 12;
 
-/**
- * Cost tracking for Money Flow Tracker
- */
-export interface CostTrackingEvent {
-    id: string;
-    timestamp: string; // ISO timestamp string
-    action: AgentActionKey; // Which agent action (phaseImplementation, codeReview, etc)
-    model: string; // Model used
-    tokens: {
-        prompt: number;
-        completion: number;
-        total: number;
-    };
-    cost: {
-        totalCost: number;
-        inputCost: number;
-        outputCost: number;
-    };
-    breakdown: Array<{
-        name: string; // e.g., "auth.ts", "Phase 1", etc
-        cost: number;
-        tokens: number;
-    }>;
-    duration: number; // Duration in ms
-    context: string; // Additional context (phase name, files, etc)
-}
-
-export interface MoneyFlowState {
-    sessionTotal: number; // Total cost for this session
-    events: CostTrackingEvent[]; // All cost events
-    lastEventId?: string; // ID of most recent event
-}
-
 export interface CodeGenState {
     blueprint: Blueprint;
     query: string;
@@ -92,7 +59,4 @@ export interface CodeGenState {
     conversationMessages: ConversationMessage[];
     projectUpdatesAccumulator: string[];
     inferenceContext: InferenceContext;
-    
-    // Money Flow Tracker
-    costTracking?: MoneyFlowState;
 } 
