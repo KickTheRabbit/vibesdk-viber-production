@@ -560,6 +560,7 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
                 messages: messagesToPass as OpenAI.ChatCompletionMessageParam[],
                 max_completion_tokens: maxTokens || 150000,
                 stream: stream ? true : false,
+                stream_options: stream ? { include_usage: true } : undefined,
                 reasoning_effort,
                 temperature,
                 user: actionKey || 'unknown',  // OpenRouter tracks this as external_user!
@@ -586,6 +587,7 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
         let toolCalls: ChatCompletionMessageFunctionToolCall[] = [];
 
         let content = '';
+        let streamUsage: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | undefined;
         if (stream) {
             // If streaming is enabled, handle the stream response
             if (response instanceof Stream) {
@@ -597,6 +599,11 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
                 
                 for await (const event of response) {
                     const delta = (event as ChatCompletionChunk).choices[0]?.delta;
+                    
+                    // Collect usage from stream chunks (OpenAI sends it in the last chunk)
+                    if ((event as any).usage) {
+                        streamUsage = (event as any).usage;
+                    }
                     
                     // Provider-specific logging
                     const provider = modelName.split('/')[0];
@@ -676,33 +683,34 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
             // Also print the total number of tokens used in the prompt
             const totalTokens = (response as OpenAI.ChatCompletion).usage?.total_tokens;
             console.log(`Total tokens used in prompt: ${totalTokens}`);
-            
-            // Track cost and broadcast via callback if provided
-            const usage = (response as OpenAI.ChatCompletion).usage;
-            if (usage && actionKey && broadcastCost) {
-                try {
-                    const { calculateCost } = await import('./costTracking');
-                    const costData = calculateCost(usage, modelName);
-                    
-                    const costEvent = {
-                        type: 'money_flow_event' as const,
-                        id: `cost_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                        timestamp: Date.now(),
-                        action: actionKey,
-                        model: modelName,
-                        tokens: {
-                            prompt: usage.prompt_tokens,
-                            completion: usage.completion_tokens,
-                            total: usage.total_tokens
-                        },
-                        cost: costData.cost
-                    };
-                    
-                    await broadcastCost(costEvent);
-                    console.log(`[COST] ${actionKey}: $${costData.cost.toFixed(4)} | ${modelName} | ${usage.total_tokens} tokens`);
-                } catch (error) {
-                    console.error('[COST_TRACKING_ERROR]', error);
-                }
+        }
+        
+        // Track cost for BOTH streaming and non-streaming
+        const usage = stream ? streamUsage : (response as OpenAI.ChatCompletion).usage;
+        
+        if (usage && actionKey && broadcastCost) {
+            try {
+                const { calculateCost } = await import('./costTracking');
+                const costData = calculateCost(usage, modelName);
+                
+                const costEvent = {
+                    type: 'money_flow_event' as const,
+                    id: `cost_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    timestamp: Date.now(),
+                    action: actionKey,
+                    model: modelName,
+                    tokens: {
+                        prompt: usage.prompt_tokens,
+                        completion: usage.completion_tokens,
+                        total: usage.total_tokens
+                    },
+                    cost: costData.cost
+                };
+                
+                await broadcastCost(costEvent);
+                console.log(`[COST] ${actionKey}: $${costData.cost.toFixed(4)} | ${modelName} | ${usage.total_tokens} tokens`);
+            } catch (error) {
+                console.error('[COST_TRACKING_ERROR]', error);
             }
         }
 

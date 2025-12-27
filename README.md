@@ -1,43 +1,49 @@
-# v35 - Complete Money Flow Fix
+# v36 - Stream Usage Fix
 
-## Was wurde gefixt?
+## Das Problem
 
-TypeScript Error: `CodingAgentInterface` hatte keine `broadcast` Methode.
+Cost tracking funktionierte nur für **non-streaming** Operations.
 
-## Änderungen:
+Streaming Operations (UserConversationProcessor, PhaseImplementation) hatten kein usage tracking.
 
-**1. Interface erweitert:**
-- `ICodingAgent.ts` - `broadcast` Methode hinzugefügt
-- `CodingAgent.ts` - `broadcast` implementation die an `agentStub` durchreicht
+Deshalb sahst du nur `projectSetup` (non-streaming).
 
-**2. Type fix:**
-- `infer.ts` - `agent` Parameter nutzt jetzt `CodingAgentInterface` statt inline type
+## Die Lösung
 
-**3. Backend:**
-- `core.ts` - Cost tracking (von v33)
-- `infer.ts` - Broadcast callback erstellen
+**1. Stream Options aktiviert:**
+```typescript
+stream_options: stream ? { include_usage: true } : undefined
+```
 
-**4. Operations (6 Files):**
-- UserConversationProcessor.ts
-- PhaseGeneration.ts
-- PhaseImplementation.ts
-- CodeReview.ts
-- FastCodeFixer.ts
-- ScreenshotAnalysis.ts
+OpenAI/OpenRouter sendet jetzt usage im letzten Stream Chunk.
 
-**5. Frontend:**
-- `src/types/moneyFlow.ts`
-- `src/components/MoneyFlowDisplay.tsx`
+**2. Usage aus Stream gesammelt:**
+```typescript
+let streamUsage: { prompt_tokens, completion_tokens, total_tokens } | undefined;
+// Im Stream Loop:
+if ((event as any).usage) {
+    streamUsage = (event as any).usage;
+}
+```
+
+**3. Unified Cost Tracking:**
+```typescript
+const usage = stream ? streamUsage : (response as OpenAI.ChatCompletion).usage;
+// Jetzt für BEIDE Fälle!
+```
 
 ## Installation
 
-Alle 13 Files ersetzen:
-- 2x services (interfaces + implementations)
-- 2x inferutils (core + infer)
-- 6x operations
-- 2x frontend (types + components)
-- 1x frontend integration (chat.tsx - `<MoneyFlowDisplay websocket={websocket} />`)
+Ersetze:
+- `worker/agents/inferutils/core.ts`
 
 ## Das sollte es sein
 
-Build sollte durchlaufen, Money Flow sollte funktionieren.
+Jetzt solltest du Cost Events für **ALLE** Operations sehen:
+- conversationalResponse (streaming)
+- phaseGeneration (non-streaming)
+- phaseImplementation (streaming)
+- codeReview (non-streaming)
+- fastCodeFixer (non-streaming)
+- screenshotAnalysis (non-streaming)
+- projectSetup (non-streaming)
