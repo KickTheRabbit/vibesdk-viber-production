@@ -39,6 +39,7 @@ interface InferenceParamsBase {
     reasoning_effort?: ReasoningEffort;
     modelConfig?: ModelConfig;
     context: InferenceContext;
+    agent?: { broadcast: (type: string, data: any) => void };
 }
 
 interface InferenceParamsStructured<T extends z.AnyZodObject> extends InferenceParamsBase {
@@ -69,7 +70,8 @@ export async function executeInference<T extends z.AnyZodObject>(   {
     format,
     modelName,
     modelConfig,
-    context
+    context,
+    agent
 }: InferenceParamsBase &    {
     schema?: T;
     format?: SchemaFormat;
@@ -104,6 +106,15 @@ export async function executeInference<T extends z.AnyZodObject>(   {
 
     let useCheaperModel = false;
 
+    // Create broadcast callback if agent is available
+    const broadcastCost = agent ? async (event: any) => {
+        try {
+            agent.broadcast('money_flow_event', event);
+        } catch (error) {
+            console.error('[BROADCAST_COST_ERROR]', error);
+        }
+    } : undefined;
+
     for (let attempt = 0; attempt < retryLimit; attempt++) {
         try {
             logger.info(`Starting ${agentActionName} operation with model ${modelName} (attempt ${attempt + 1}/${retryLimit})`);
@@ -125,6 +136,7 @@ export async function executeInference<T extends z.AnyZodObject>(   {
                 stream,
                 reasoning_effort: useCheaperModel ? undefined : reasoning_effort,
                 temperature,
+                broadcastCost,
             }) : await infer({
                 env,
                 metadata: context,
@@ -136,6 +148,7 @@ export async function executeInference<T extends z.AnyZodObject>(   {
                 actionKey: agentActionName,
                 reasoning_effort: useCheaperModel ? undefined : reasoning_effort,
                 temperature,
+                broadcastCost,
             });
             logger.info(`Successfully completed ${agentActionName} operation`);
             // console.log(result);

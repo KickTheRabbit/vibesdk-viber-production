@@ -1,6 +1,5 @@
 /**
  * Money Flow Tracker - Simple Cost Display
- * Shows real-time AI operation costs
  */
 
 export interface MoneyFlowEvent {

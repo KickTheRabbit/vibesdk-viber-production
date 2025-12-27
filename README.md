@@ -1,4 +1,4 @@
-# Money Flow Tracker v32 - Simple & Clean
+# Money Flow Tracker v33 - Fixed & Working
 
 ## Was ist das?
 
@@ -8,17 +8,15 @@ Ein einfacher Money Flow Tracker der **automatisch** die Kosten jeder AI-Operati
 
 ## Installation
 
-### 1. Backend (1 File)
+### 1. Backend (2 Files)
 
-**`worker/agents/inferutils/core.ts`**
-- Ersetze das komplette File mit der Version aus diesem Package
-- Das ist die EINZIGE Backend-Änderung
+**Ersetze diese Files:**
+1. `worker/agents/inferutils/core.ts`
+2. `worker/agents/inferutils/infer.ts`
 
-**Was passiert:**
-- Bei jedem AI-Call werden automatisch die `usage` Daten abgegriffen
-- Cost wird berechnet mit `costTracking.ts` (die du schon hast)
-- Event wird per WebSocket ans Frontend gesendet
-- Alles passiert an EINER zentralen Stelle
+**Was wurde geändert:**
+- `core.ts`: Cost Tracking Logik hinzugefügt (Zeilen 678-704)
+- `infer.ts`: `agent` Parameter hinzugefügt, `broadcastCost` Callback erstellt
 
 ### 2. Frontend (2 Files + Integration)
 
@@ -26,98 +24,80 @@ Ein einfacher Money Flow Tracker der **automatisch** die Kosten jeder AI-Operati
 1. `src/types/moneyFlow.ts` - TypeScript Types
 2. `src/components/MoneyFlowDisplay.tsx` - Display Component
 
-**Integration in `src/routes/chat/chat.tsx`:**
+**Integration in Operations:**
+
+Die Operations müssen den `agent` Parameter an `executeInference` übergeben:
 
 ```typescript
-// 1. Import hinzufügen (oben)
+// In jeder Operation (z.B. UserConversationProcessor.ts)
+const result = await executeInference({
+    env,
+    messages,
+    agentActionName: "conversationalResponse",
+    context: options.inferenceContext,
+    agent: options.agent,  // <-- Diese Zeile hinzufügen
+    // ... rest of params
+});
+```
+
+**Betroffen sind diese Files:**
+- `worker/agents/operations/UserConversationProcessor.ts`
+- `worker/agents/operations/PhaseGeneration.ts`
+- `worker/agents/operations/PhaseImplementation.ts`
+- `worker/agents/operations/CodeReview.ts`
+- `worker/agents/operations/FileRegeneration.ts`
+- `worker/agents/operations/FastCodeFixer.ts`
+- `worker/agents/operations/ScreenshotAnalysis.ts`
+
+**Frontend Integration in `src/routes/chat/chat.tsx`:**
+
+```typescript
+// 1. Import hinzufügen
 import { MoneyFlowDisplay } from '@/components/MoneyFlowDisplay';
 
-// 2. Component einbauen (ganz am Ende vor </div>)
+// 2. Component einbauen (ganz am Ende)
 <MoneyFlowDisplay websocket={websocket} />
 ```
 
-**Das wars!** 🎉
-
 ## Wie es funktioniert
 
-### Backend Flow:
 ```
-User fragt was
+User Action
     ↓
-executeInference() → infer() in core.ts
+Operation (z.B. UserConversationProcessor)
+    ↓
+executeInference() mit agent parameter
+    ↓
+Erstellt broadcastCost callback
+    ↓
+infer() in core.ts  
     ↓
 OpenRouter API Call
     ↓
-Response kommt zurück mit `usage` Daten
+Response mit usage Daten
     ↓
-Cost berechnen (Zeile 673-701 in core.ts)
+broadcastCost() wird aufgerufen
     ↓
-WebSocket broadcast an Frontend
-```
-
-### Frontend Flow:
-```
-MoneyFlowDisplay Component
+agent.broadcast('money_flow_event', costEvent)
     ↓
-Hört auf WebSocket 'money_flow_event'
+WebSocket → Frontend
     ↓
-Event kommt rein
-    ↓
-State updaten (sessionTotal + events)
-    ↓
-Re-render → User sieht neue Kosten
-```
-
-## Was wird angezeigt?
-
-**Floating Panel** unten rechts:
-```
-┌─────────────────────────┐
-│ Session Cost    $0.0156 │
-├─────────────────────────┤
-│ conversationalResponse  │
-│ claude-sonnet • 1,234   │
-│                 $0.0045 │
-│                         │
-│ phaseGeneration         │
-│ claude-opus • 2,456     │
-│                 $0.0089 │
-│                         │
-│ ... (last 10)           │
-└─────────────────────────┘
+MoneyFlowDisplay zeigt's an
 ```
 
 ## Features
 
 ✅ **Echtzeit** - Sofort wenn AI-Call fertig ist
-✅ **Automatisch** - Keine manuelle Arbeit
-✅ **Zentral** - Nur eine Stelle im Code
-✅ **Simpel** - Minimales UI
+✅ **Automatisch** - Cost wird in core.ts berechnet
+✅ **Zentral** - Nur 2 Backend-Files + 7 Zeilen in Operations
+✅ **Type-safe** - Alles sauber typisiert
 ✅ **Performance** - Nur last 10 Events anzeigen
-✅ **Kollisions-frei** - Nutzt bestehende WebSocket Infrastruktur
 
-## Troubleshooting
+## Warum dieser Ansatz?
 
-**Keine Events sichtbar?**
-1. Check Browser Console - kommen WebSocket Messages an?
-2. Check Cloudflare Logs - wird cost geloggt? `[COST] ...`
-3. Check ob `websocket` prop nicht null ist
+- `env.AGENTS` existiert nicht in Cloudflare Env
+- Direkter Broadcast aus `core.ts` nicht möglich
+- **Lösung**: `agent` Parameter durchreichen, dann `agent.broadcast()` nutzen
+- Operations haben eh schon Zugriff auf `options.agent`
 
-**Build Fehler?**
-- Stelle sicher dass `worker/agents/inferutils/costTracking.ts` existiert
-- Das ist die Model Pricing Tabelle die wir behalten haben
-
-**Kosten stimmen nicht?**
-- Check in `costTracking.ts` ob dein Model drin ist
-- Falls nicht, füge es hinzu mit dem richtigen Preis
-
-## Next Steps (Optional)
-
-Wenn du willst kannst du später:
-- Größeres Panel mit mehr Details
-- Export zu CSV
-- Filter nach Action Type
-- Graphen / Charts
-- Persistent speichern in DB
-
-Aber erstmal: **Keep it simple!** ✨
+Das wars! 🎉
