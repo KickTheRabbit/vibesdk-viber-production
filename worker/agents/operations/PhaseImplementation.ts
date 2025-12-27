@@ -492,6 +492,7 @@ export class PhaseImplementationOperation extends AgentOperation<PhaseImplementa
             env: env,
             agentActionName: inputs.isFirstPhase ? "firstPhaseImplementation" : "phaseImplementation",
             context: options.inferenceContext,
+            agent: options.agent,
             messages,
             modelConfig,
             stream: {
@@ -587,6 +588,7 @@ export class PhaseImplementationOperation extends AgentOperation<PhaseImplementa
                 messages,
                 agentActionName: "projectSetup",
                 context: options.inferenceContext,
+                agent: options.agent,
             });
 
             if (!results || !results.string) {

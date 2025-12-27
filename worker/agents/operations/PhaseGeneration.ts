@@ -217,6 +217,7 @@ export class PhaseGenerationOperation extends AgentOperation<PhaseGenerationInpu
                 agentActionName: "phaseGeneration",
                 schema: PhaseConceptGenerationSchema,
                 context: options.inferenceContext,
+                agent: options.agent,
                 reasoning_effort: (userContext?.suggestions || issues.runtimeErrors.length > 0) ? AGENT_CONFIG.phaseGeneration.reasoning_effort == 'low' ? 'medium' : 'high' : undefined,
                 format: 'markdown',
             });

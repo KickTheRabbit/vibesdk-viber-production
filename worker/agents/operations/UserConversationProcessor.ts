@@ -319,6 +319,7 @@ export class UserConversationProcessor extends AgentOperation<UserConversationIn
                 messages: messagesForInference,
                 agentActionName: "conversationalResponse",
                 context: options.inferenceContext,
+                agent: options.agent,
                 tools, // Enable tools for the conversational AI
                 stream: {
                     onChunk: (chunk) => {
@@ -549,6 +550,7 @@ Provide the summary now:`
                 messages: [...messages, summarizationInstruction],
                 agentActionName: 'conversationalResponse',
                 context: options.inferenceContext,
+                agent: options.agent,
             });
 
             const summary = summaryResult.string.trim();

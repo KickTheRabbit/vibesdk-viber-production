@@ -105,6 +105,7 @@ export class ScreenshotAnalysisOperation extends AgentOperation<ScreenshotAnalys
                 schema: ScreenshotAnalysisSchema,
                 agentActionName: 'screenshotAnalysis',
                 context: options.inferenceContext,
+                agent: options.agent,
                 retryLimit: 3,
             });
     

@@ -219,6 +219,7 @@ export class CodeReviewOperation extends AgentOperation<CodeReviewInputs, CodeRe
                 schema: CodeReviewOutput,
                 agentActionName: "codeReview",
                 context: options.inferenceContext,
+                agent: options.agent,
                 reasoning_effort: issues.runtimeErrors.length || issues.staticAnalysis.lint.issues.length || issues.staticAnalysis.typecheck.issues.length > 0 ? undefined : 'low',
                 // format: 'markdown'
             });
