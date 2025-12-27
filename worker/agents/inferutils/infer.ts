@@ -9,6 +9,7 @@ import { AGENT_CONFIG } from './config';
 import { createLogger } from '../../logger';
 import { RateLimitExceededError, SecurityError } from 'shared/types/errors';
 import { ToolDefinition } from '../tools/types';
+import { CodingAgentInterface } from '../services/implementations/CodingAgent';
 
 const logger = createLogger('InferenceUtils');
 
@@ -39,7 +40,7 @@ interface InferenceParamsBase {
     reasoning_effort?: ReasoningEffort;
     modelConfig?: ModelConfig;
     context: InferenceContext;
-    agent?: { broadcast: (type: string, data: any) => void };
+    agent?: CodingAgentInterface;
 }
 
 interface InferenceParamsStructured<T extends z.AnyZodObject> extends InferenceParamsBase {

@@ -1,5 +1,6 @@
 import { ProcessedImageAttachment } from "worker/types/image-attachment";
 import { ICodingAgent } from "../interfaces/ICodingAgent";
+import { WebSocketMessageType, WebSocketMessageData } from "worker/api/websocketTypes";
 
 /*
 * CodingAgentInterface - stub for passing to tool calls
@@ -34,6 +35,10 @@ export class CodingAgentInterface {
 
     queueRequest(request: string, images?: ProcessedImageAttachment[]): void {
         this.agentStub.queueUserRequest(request, images);
+    }
+
+    broadcast<T extends WebSocketMessageType>(msg: T, data?: WebSocketMessageData<T>): void {
+        this.agentStub.broadcast(msg, data);
     }
 
 }

@@ -2,6 +2,7 @@ import { FileOutputType } from "worker/agents/schemas";
 import { BaseSandboxService } from "worker/services/sandbox/BaseSandboxService";
 import { PreviewType } from "worker/services/sandbox/sandboxTypes";
 import { ProcessedImageAttachment } from "worker/types/image-attachment";
+import { WebSocketMessageType, WebSocketMessageData } from "worker/api/websocketTypes";
 
 export abstract class ICodingAgent {
     abstract getSandboxServiceClient(): BaseSandboxService;
@@ -13,4 +14,6 @@ export abstract class ICodingAgent {
     abstract getLogs(reset?: boolean): Promise<string>;
 
     abstract queueUserRequest(request: string, images?: ProcessedImageAttachment[]): void;
+
+    abstract broadcast<T extends WebSocketMessageType>(msg: T, data?: WebSocketMessageData<T>): void;
 }

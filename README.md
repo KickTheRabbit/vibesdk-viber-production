@@ -1,24 +1,43 @@
-# v34 - Operations Patch
+# v35 - Complete Money Flow Fix
 
-## Was ist das?
+## Was wurde gefixt?
 
-Alle 7 Operations mit `agent: options.agent,` gepatched.
+TypeScript Error: `CodingAgentInterface` hatte keine `broadcast` Methode.
 
-## Files
+## Änderungen:
 
-6 Operations (FileRegeneration nutzt kein executeInference):
+**1. Interface erweitert:**
+- `ICodingAgent.ts` - `broadcast` Methode hinzugefügt
+- `CodingAgent.ts` - `broadcast` implementation die an `agentStub` durchreicht
 
-1. `UserConversationProcessor.ts` - 2 Calls gepatched
-2. `PhaseGeneration.ts` - 1 Call gepatched
-3. `PhaseImplementation.ts` - 2 Calls gepatched
-4. `CodeReview.ts` - 1 Call gepatched
-5. `FastCodeFixer.ts` - 1 Call gepatched
-6. `ScreenshotAnalysis.ts` - 1 Call gepatched
+**2. Type fix:**
+- `infer.ts` - `agent` Parameter nutzt jetzt `CodingAgentInterface` statt inline type
+
+**3. Backend:**
+- `core.ts` - Cost tracking (von v33)
+- `infer.ts` - Broadcast callback erstellen
+
+**4. Operations (6 Files):**
+- UserConversationProcessor.ts
+- PhaseGeneration.ts
+- PhaseImplementation.ts
+- CodeReview.ts
+- FastCodeFixer.ts
+- ScreenshotAnalysis.ts
+
+**5. Frontend:**
+- `src/types/moneyFlow.ts`
+- `src/components/MoneyFlowDisplay.tsx`
 
 ## Installation
 
-Ersetze alle 6 Files in `worker/agents/operations/`
+Alle 13 Files ersetzen:
+- 2x services (interfaces + implementations)
+- 2x inferutils (core + infer)
+- 6x operations
+- 2x frontend (types + components)
+- 1x frontend integration (chat.tsx - `<MoneyFlowDisplay websocket={websocket} />`)
 
-## Das wars
+## Das sollte es sein
 
-Nach Upload + Deploy sollte Money Flow funktionieren.
+Build sollte durchlaufen, Money Flow sollte funktionieren.
