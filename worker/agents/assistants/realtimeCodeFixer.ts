@@ -213,6 +213,7 @@ export class RealtimeCodeFixer extends Assistant<Env> {
     userPrompt: string;
     systemPrompt: string;
     modelConfigOverride?: ModelConfig;
+    agent?: any;
 
     constructor(
         env: Env,
@@ -221,7 +222,8 @@ export class RealtimeCodeFixer extends Assistant<Env> {
         altPassModelOverride?: string,// = AIModels.GEMINI_2_5_FLASH,
         modelConfigOverride?: ModelConfig,
         systemPrompt: string = SYSTEM_PROMPT,
-        userPrompt: string = USER_PROMPT
+        userPrompt: string = USER_PROMPT,
+        agent?: any
     ) {
         super(env, inferenceContext);
         this.lightMode = lightMode;
@@ -229,6 +231,7 @@ export class RealtimeCodeFixer extends Assistant<Env> {
         this.userPrompt = userPrompt;
         this.systemPrompt = systemPrompt;
         this.modelConfigOverride = modelConfigOverride;
+        this.agent = agent;
     }
 
     async run(
@@ -294,6 +297,7 @@ Don't be nitpicky, If there are no actual issues, just say "No issues found".
                     env: this.env,
                     agentActionName: isFileRegeneration ? "fileRegeneration" : "realtimeCodeFixer",
                     context: this.inferenceContext,
+                    agent: this.agent,
                     messages,
                     modelName: (i !== 0 && this.altPassModelOverride) || this.lightMode ? this.altPassModelOverride : undefined,
                     temperature: (i !== 0 && this.altPassModelOverride) || this.lightMode ? 0.0 : undefined,
@@ -497,6 +501,14 @@ ${block.error}
 
             const messages = this.save([createUserMessage(diffFixerPrompt)]); 
             
+            const broadcastCost = this.agent ? async (event: any) => {
+                try {
+                    this.agent.broadcast('money_flow_event', event);
+                } catch (error) {
+                    console.error('[BROADCAST_COST_ERROR]', error);
+                }
+            } : undefined;
+            
             const llmResponse = await infer({
                 env: this.env,
                 metadata: this.inferenceContext,
@@ -506,6 +518,7 @@ ${block.error}
                 maxTokens: 10000,
                 actionKey:'realtimeCodeFixer',
                 messages,
+                broadcastCost,
             });
 
             if (!llmResponse) {

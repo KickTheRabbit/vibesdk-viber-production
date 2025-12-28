@@ -231,6 +231,7 @@ export async function generateBlueprint({ env, inferenceContext, query, language
             agentActionName: "blueprint",
             schema: BlueprintSchema,
             context: inferenceContext,
+            agent,
             stream: stream,
         });
 

@@ -119,6 +119,7 @@ ENTROPY SEED: ${generateSecureToken(64)} - for unique results`;
             agentActionName: "templateSelection",
             schema: TemplateSelectionSchema,
             context: inferenceContext,
+            agent,
             maxTokens: 2000,
         });
 
