@@ -76,6 +76,7 @@ export async function getTemplateForQuery(
     inferenceContext: InferenceContext,
     query: string,
     images: ImageAttachment[] | undefined,
+    agentId: string,
     logger: StructuredLogger,
 ) : Promise<{sandboxSessionId: string, templateDetails: TemplateDetails, selection: TemplateSelection}> {
     // Fetch available templates
@@ -93,6 +94,7 @@ export async function getTemplateForQuery(
                 query,
                 availableTemplates: templatesResponse.templates,
                 images,
+                agentId,
             }), 
             getSandboxService(sandboxSessionId, 'default')
         ]);

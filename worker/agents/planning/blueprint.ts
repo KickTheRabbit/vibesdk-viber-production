@@ -165,6 +165,7 @@ export interface BlueprintGenerationArgs {
     templateDetails: TemplateDetails;
     templateMetaInfo: TemplateSelection;
     images?: ProcessedImageAttachment[];
+    agentId: string;
     stream?: {
         chunk_size: number;
         onChunk: (chunk: string) => void;
@@ -175,7 +176,17 @@ export interface BlueprintGenerationArgs {
  * Generate a blueprint for the application based on user prompt
  */
 // Update function signature and system prompt
-export async function generateBlueprint({ env, inferenceContext, query, language, frameworks, templateDetails, templateMetaInfo, images, stream }: BlueprintGenerationArgs): Promise<Blueprint> {
+export async function generateBlueprint({ env, inferenceContext, query, language, frameworks, templateDetails, templateMetaInfo, images, agentId, stream }: BlueprintGenerationArgs): Promise<Blueprint> {
+    // Helper to queue cost events
+    const queueCostEvent = async (event: any) => {
+        try {
+            const agentStub = env.CodeGenObject.get(env.CodeGenObject.idFromName(agentId));
+            await agentStub.queueCostEvent(event);
+        } catch (error) {
+            console.error('[QUEUE_COST_ERROR]', error);
+        }
+    };
+    
     try {
         logger.info("Generating application blueprint", { query, queryLength: query.length, imagesCount: images?.length || 0 });
         logger.info(templateDetails ? `Using template: ${templateDetails.name}` : "Not using a template.");
@@ -225,13 +236,16 @@ export async function generateBlueprint({ env, inferenceContext, query, language
         // }
 
             console.log("[TRACKING] 🎯 blueprint - START");
+        
+        const broadcastCost = async (event: any) => await queueCostEvent(event);
+        
         const { object: results } = await executeInference({
             env,
             messages,
             agentActionName: "blueprint",
             schema: BlueprintSchema,
             context: inferenceContext,
-            agent,
+            agent: { broadcast: broadcastCost } as any,
             stream: stream,
         });
 

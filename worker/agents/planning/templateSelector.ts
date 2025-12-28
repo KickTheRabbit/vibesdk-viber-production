@@ -15,12 +15,23 @@ interface SelectTemplateArgs {
     availableTemplates: TemplateListResponse['templates'];
     inferenceContext: InferenceContext;
     images?: ImageAttachment[];
+    agentId: string;
 }
 
 /**
  * Uses AI to select the most suitable template for a given query.
  */
-export async function selectTemplate({ env, query, availableTemplates, inferenceContext, images }: SelectTemplateArgs): Promise<TemplateSelection> {
+export async function selectTemplate({ env, query, availableTemplates, inferenceContext, images, agentId }: SelectTemplateArgs): Promise<TemplateSelection> {
+    // Helper to queue cost events
+    const queueCostEvent = async (event: any) => {
+        try {
+            const agentStub = env.CodeGenObject.get(env.CodeGenObject.idFromName(agentId));
+            await agentStub.queueCostEvent(event);
+        } catch (error) {
+            console.error('[QUEUE_COST_ERROR]', error);
+        }
+    };
+    
     if (availableTemplates.length === 0) {
         logger.info("No templates available for selection.");
         return { selectedTemplateName: null, reasoning: "No templates were available to choose from.", useCase: null, complexity: null, styleSelection: null, projectName: '' };
@@ -113,13 +124,15 @@ ENTROPY SEED: ${generateSecureToken(64)} - for unique results`;
             userMessage
         ];
 
+        const broadcastCost = async (event: any) => await queueCostEvent(event);
+        
         const { object: selection } = await executeInference({
             env,
             messages,
             agentActionName: "templateSelection",
             schema: TemplateSelectionSchema,
             context: inferenceContext,
-            agent,
+            agent: { broadcast: broadcastCost } as any,
             maxTokens: 2000,
         });
 

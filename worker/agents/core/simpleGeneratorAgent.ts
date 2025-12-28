@@ -282,6 +282,7 @@ export class SimpleCodeGeneratorAgent extends Agent<Env, CodeGenState> {
             templateDetails: templateInfo.templateDetails,
             templateMetaInfo: templateInfo.selection,
             images: initArgs.images,
+            agentId: this.state.sessionId,
             stream: {
                 chunk_size: 256,
                 onChunk: (chunk) => {
@@ -501,6 +502,9 @@ export class SimpleCodeGeneratorAgent extends Agent<Env, CodeGenState> {
             return;
         }
         this.isGenerating = true;
+
+        // Flush any queued cost events from pre-generation phase
+        this.flushCostQueue();
 
         this.broadcast(WebSocketMessageResponses.GENERATION_STARTED, {
             message: 'Starting code generation',
@@ -2052,6 +2056,29 @@ export class SimpleCodeGeneratorAgent extends Agent<Env, CodeGenState> {
             this.onProjectUpdate(message);
         }
         broadcastToConnections(this, msg, data || {} as WebSocketMessageData<T>);
+    }
+
+    /**
+     * Queue a cost event to be broadcast later
+     */
+    public async queueCostEvent(event: any): Promise<void> {
+        if (!this.state.costEventQueue) {
+            this.state.costEventQueue = [];
+        }
+        this.state.costEventQueue.push(event);
+        await this.persist();
+    }
+
+    /**
+     * Flush all queued cost events
+     */
+    public flushCostQueue(): void {
+        if (this.state.costEventQueue && this.state.costEventQueue.length > 0) {
+            for (const event of this.state.costEventQueue) {
+                this.broadcast('money_flow_event', event);
+            }
+            this.state.costEventQueue = [];
+        }
     }
 
     /**
