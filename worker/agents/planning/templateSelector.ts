@@ -124,7 +124,11 @@ ENTROPY SEED: ${generateSecureToken(64)} - for unique results`;
             userMessage
         ];
 
-        const broadcastCost = async (event: any) => await queueCostEvent(event);
+        const broadcastCost = async (type: string, data: any) => {
+            if (type === 'money_flow_event') {
+                await queueCostEvent(data);
+            }
+        };
         
         const { object: selection } = await executeInference({
             env,

@@ -1,4 +1,4 @@
-# v41 - COMPLETE Money Flow Tracking (persist fix)
+# v42 - Queue Fix (broadcast signature)
 
 ## Option 3: Event Queue System
 

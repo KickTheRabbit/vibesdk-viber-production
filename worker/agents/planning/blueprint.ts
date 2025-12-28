@@ -237,7 +237,11 @@ export async function generateBlueprint({ env, inferenceContext, query, language
 
             console.log("[TRACKING] 🎯 blueprint - START");
         
-        const broadcastCost = async (event: any) => await queueCostEvent(event);
+        const broadcastCost = async (type: string, data: any) => {
+            if (type === 'money_flow_event') {
+                await queueCostEvent(data);
+            }
+        };
         
         const { object: results } = await executeInference({
             env,
