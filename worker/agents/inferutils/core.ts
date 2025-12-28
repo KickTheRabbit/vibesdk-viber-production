@@ -688,6 +688,8 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
         // Track cost for BOTH streaming and non-streaming
         const usage = stream ? streamUsage : (response as OpenAI.ChatCompletion).usage;
         
+        console.log(`[DEBUG_USAGE] actionKey=${actionKey}, stream=${!!stream}, streamUsage=${JSON.stringify(streamUsage)}, usage=${JSON.stringify(usage)}, broadcastCost=${!!broadcastCost}`);
+        
         if (usage && actionKey && broadcastCost) {
             try {
                 const { calculateCost } = await import('./costTracking');
@@ -712,6 +714,8 @@ export async function infer<OutputSchema extends z.AnyZodObject>({
             } catch (error) {
                 console.error('[COST_TRACKING_ERROR]', error);
             }
+        } else {
+            console.log(`[DEBUG_SKIP] Skipping cost tracking - usage=${!!usage}, actionKey=${!!actionKey}, broadcastCost=${!!broadcastCost}`);
         }
 
         if (!content && !stream && !toolCalls.length) {
