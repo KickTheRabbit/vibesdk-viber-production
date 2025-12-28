@@ -1,4 +1,4 @@
-# v40 - COMPLETE Money Flow Tracking
+# v41 - COMPLETE Money Flow Tracking (persist fix)
 
 ## Option 3: Event Queue System
 

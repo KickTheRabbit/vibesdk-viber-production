@@ -2066,7 +2066,7 @@ export class SimpleCodeGeneratorAgent extends Agent<Env, CodeGenState> {
             this.state.costEventQueue = [];
         }
         this.state.costEventQueue.push(event);
-        await this.persist();
+        // State is automatically persisted by Durable Objects
     }
 
     /**
