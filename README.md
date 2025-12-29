@@ -1,5 +1,6 @@
 # VibeSDK v46 - Money Flow Debug Enhancement (KORRIGIERT)
 
+
 ## 🔍 Problem Summary
 Von 12 Events die an OpenRouter gesendet werden, kommen nur 9 im Frontend (WebSocket) an.
 
