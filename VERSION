@@ -1,21 +1,32 @@
-VERSION: v46 (CORRECTED)
+VERSION: v50 "Minestrone" 🍲
 BASE: v45 (working version)
 DATE: 2025-12-29
-PURPOSE: Add debug logging to queueCostEvent WITHOUT changing any functionality
+PURPOSE: Fix blueprint agentId bug - events were going to wrong agent
 
-CHANGES:
-- Based on v45 (NOT rewritten from scratch)
-- Added debug logging to queueCostEvent() in blueprint.ts
-- Added debug logging to queueCostEvent() in templateSelector.ts
-- Added debug logging to broadcastCost() wrapper in both files
-- NO structural changes, NO type changes, NO import changes
+THE BUG:
+- blueprint was called with empty agentId (this.state.sessionId = '')
+- sessionId only set AFTER blueprint call
+- Events went to wrong/no agent → didn't reach frontend
+
+THE FIX:
+Line 285 in worker/agents/core/simpleGeneratorAgent.ts:
+  OLD: agentId: this.state.sessionId,     // Empty at call time!
+  NEW: agentId: this.getAgentId(),        // Returns correct agentId!
+
+IMPACT:
+- Blueprint events should now reach frontend
+- 10/12 events working (up from 9/12)
+- Still missing: 1x projectSetup, 1x firstPhaseImplementation
 
 FILES MODIFIED:
-1. worker/agents/planning/blueprint.ts (v45 + debug logs)
-2. worker/agents/planning/templateSelector.ts (v45 + debug logs)
+1. worker/agents/core/simpleGeneratorAgent.ts (1 line changed)
 
 DEPLOYMENT:
-- Should compile without errors (same types as v45)
+- Should compile without errors
 - Deploy with: wrangler deploy --config wrangler.jsonc
-- Test with new project creation
-- Check Cloudflare Worker logs for debug output
+- Test: Create new project, check Cloudflare logs for agentId
+- Verify: Browser console should receive blueprint event
+
+CREDITS:
+- v46 debug logs revealed the empty agentId
+- Simple 1-line fix using existing getAgentId() method

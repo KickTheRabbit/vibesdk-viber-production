@@ -282,7 +282,7 @@ export class SimpleCodeGeneratorAgent extends Agent<Env, CodeGenState> {
             templateDetails: templateInfo.templateDetails,
             templateMetaInfo: templateInfo.selection,
             images: initArgs.images,
-            agentId: this.state.sessionId,
+            agentId: this.getAgentId(),
             stream: {
                 chunk_size: 256,
                 onChunk: (chunk) => {

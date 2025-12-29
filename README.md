@@ -1,106 +1,104 @@
-# VibeSDK v46 - Money Flow Debug Enhancement (KORRIGIERT)
+# VibeSDK v50 - The Minestrone Fix 🍲
 
+## 🎯 Das Problem (gefunden durch v46 Debug-Logs)
 
-## 🔍 Problem Summary
-Von 12 Events die an OpenRouter gesendet werden, kommen nur 9 im Frontend (WebSocket) an.
+**Blueprint Events kamen nicht im Frontend an, weil:**
 
-**Fehlende Events:**
-- ❌ blueprint
-- ❌ firstPhaseImplementation  
-- ❌ projectSetup (zweites Event fehlt)
-
-**Muster:** Alle fehlenden Events nutzen `queueCostEvent()` statt direktem `agent.broadcast()`
-
-## ✅ Was ist v46?
-
-**v46 = v45 + Debug-Logging**
-
-Diese Version basiert auf der **funktionierenden v45** und fügt NUR Debug-Logging hinzu.
-**KEINE** strukturellen Änderungen, **KEINE** neuen Imports, **KEINE** Type-Änderungen.
-
-## 🎯 Änderungen in v46
-
-### Debug Logging in queueCostEvent()
-
-```typescript
-const queueCostEvent = async (event: any) => {
-    console.log('[QUEUE_COST_EVENT] blueprint - Starting', {
-        agentId,
-        eventKeys: Object.keys(event || {}),
-        eventSample: event ? JSON.stringify(event).substring(0, 200) : 'null'
-    });
-    
-    try {
-        console.log('[QUEUE_COST_EVENT] blueprint - Getting agentStub for agentId:', agentId);
-        const agentStub = env.CodeGenObject.get(env.CodeGenObject.idFromName(agentId));
-        console.log('[QUEUE_COST_EVENT] blueprint - Got agentStub:', !!agentStub);
-        
-        console.log('[QUEUE_COST_EVENT] blueprint - Calling queueCostEvent on stub');
-        await agentStub.queueCostEvent(event);
-        console.log('[QUEUE_COST_EVENT] blueprint - Successfully queued event');
-    } catch (error) {
-        console.error('[QUEUE_COST_EVENT] blueprint - ERROR:', {
-            error: error,
-            errorMessage: error instanceof Error ? error.message : String(error),
-            errorStack: error instanceof Error ? error.stack : undefined,
-            agentId
-        });
-    }
-};
+```
+[QUEUE_COST_EVENT] blueprint - Getting agentStub for agentId: 
+                                                               ↑↑↑ LEER!
 ```
 
-### Debug Logging in broadcastCost()
+Die agentId war **LEER** beim blueprint-Aufruf!
 
+### Root Cause:
+
+In `simpleGeneratorAgent.ts` Zeile 285:
 ```typescript
-const broadcastCost = async (type: string, data: any) => {
-    console.log('[BROADCAST_COST] blueprint - Called with type:', type, 'hasData:', !!data);
-    if (type === 'money_flow_event') {
-        console.log('[BROADCAST_COST] blueprint - Calling queueCostEvent');
-        await queueCostEvent(data);
-    }
-};
+const blueprint = await generateBlueprint({
+    // ...
+    agentId: this.state.sessionId,  // ← PROBLEM!
 ```
 
-### Geänderte Dateien
-1. **worker/agents/planning/blueprint.ts** (basiert auf v45)
-   - Erweiterte Debug-Logs in `queueCostEvent()`
-   - Erweiterte Debug-Logs in `broadcastCost()`
+**Warum war das falsch?**
 
-2. **worker/agents/planning/templateSelector.ts** (basiert auf v45)
-   - Erweiterte Debug-Logs in `queueCostEvent()`
-   - Erweiterte Debug-Logs in `broadcastCost()`
+1. `this.state.sessionId` wird mit `''` initialisiert (Zeile 164)
+2. `generateBlueprint()` wird aufgerufen (Zeile 276)
+3. `sessionId` wird DANACH erst gesetzt (Zeile 307)
 
-## 📋 Deployment-Anleitung
+→ Blueprint bekommt leere agentId → Event geht an falschen/keinen Agent → kommt nicht im Frontend an!
 
-### 1. Dateien ersetzen
+## ✅ Die Lösung: **1-Zeilen-Fix!**
+
+### Geänderte Datei:
+**worker/agents/core/simpleGeneratorAgent.ts** (Zeile 285)
+
+```typescript
+// ❌ VORHER (v45):
+agentId: this.state.sessionId,  // Leer zum Zeitpunkt des Aufrufs!
+
+// ✅ NACHHER (v50):
+agentId: this.getAgentId(),  // Holt korrekte agentId aus inferenceContext!
+```
+
+### Warum funktioniert das?
+
+`getAgentId()` ist bereits definiert und gibt die richtige ID zurück:
+```typescript
+getAgentId() {
+    return this.state.inferenceContext.agentId  // ✅ Hat korrekten Wert!
+}
+```
+
+Die `inferenceContext.agentId` wird VOR dem Blueprint-Aufruf gesetzt (Zeile 270) und hat immer den richtigen Wert!
+
+## 📊 Erwartetes Ergebnis nach v50
+
+### Vorher (v45/v46):
+```
+[QUEUE_COST_EVENT] blueprint - Getting agentStub for agentId: 
+[QUEUE_COST_EVENT] blueprint - Got agentStub: true
+[QUEUE_COST_EVENT] blueprint - Successfully queued event
+```
+❌ Event wird an falschen Agent geschickt → kommt nicht im Frontend an
+
+### Nachher (v50):
+```
+[QUEUE_COST_EVENT] blueprint - Getting agentStub for agentId: ef4391fd-e03c-4eb5-a0ae-c54b8aeb0083
+[QUEUE_COST_EVENT] blueprint - Got agentStub: true
+[QUEUE_COST_EVENT] blueprint - Successfully queued event
+```
+✅ Event wird an richtigen Agent geschickt → **kommt im Frontend an!**
+
+## 📋 Deployment
+
+### 1. Datei ersetzen
 
 ```bash
 # Im vibesdk-viber-production Repository:
-cd worker/agents/planning/
+cd worker/agents/core/
 
 # Optional: Backup
-cp blueprint.ts blueprint.ts.v45.backup
-cp templateSelector.ts templateSelector.ts.v45.backup
+cp simpleGeneratorAgent.ts simpleGeneratorAgent.ts.v45.backup
 
-# v46 Dateien kopieren
-cp /path/to/v46-money-flow-debug/worker/agents/planning/blueprint.ts .
-cp /path/to/v46-money-flow-debug/worker/agents/planning/templateSelector.ts .
+# v50 Datei kopieren
+cp /path/to/v50-minestrone-fix/worker/agents/core/simpleGeneratorAgent.ts .
 ```
 
-### 2. Build testen (lokal)
+### 2. Build testen
 
 ```bash
 # Im Repository Root:
 bun run build
 ```
 
-**Sollte ohne Errors durchlaufen!** Falls Errors → v46 nicht korrekt kopiert.
+Sollte ohne Errors durchlaufen! ✅
 
 ### 3. Git Commit & Push
 
 ```bash
-git add worker/agents/planning/blueprint.ts worker/agents/planning/templateSelector.ts
-git commit -m "v46: Add debug logging to queueCostEvent (based on v45)"
+git add worker/agents/core/simpleGeneratorAgent.ts
+git commit -m "v50: Fix blueprint agentId - use getAgentId() instead of empty sessionId"
 git push origin main
 ```
 
@@ -110,62 +108,43 @@ git push origin main
 wrangler deploy --config wrangler.jsonc
 ```
 
-**WICHTIG:** Build Cache wird automatisch gecleart beim Deploy.
-
 ### 5. Testen
 
-1. ✅ Gehe zu https://vibesdk.viber.lol
-2. ✅ Erstelle **neues Projekt** (z.B. "make a simple todo app")
-3. ✅ Cloudflare Dashboard → Workers & Pages → viber-production → Logs
-4. ✅ **Live Logs** aktivieren
+1. ✅ Neues Projekt erstellen
+2. ✅ Cloudflare Logs checken - blueprint sollte jetzt agentId haben!
+3. ✅ Browser Console - **blueprint Event sollte jetzt ankommen!** 🎉
 
-## 🔎 Erwartete Log-Ausgaben
+## 🔍 Was zu checken ist
 
-### templateSelection:
+### Cloudflare Logs:
 ```
-[BROADCAST_COST] templateSelection - Called with type: money_flow_event hasData: true
-[BROADCAST_COST] templateSelection - Calling queueCostEvent
-[QUEUE_COST_EVENT] templateSelection - Starting { agentId: '...', eventKeys: [...] }
-[QUEUE_COST_EVENT] templateSelection - Getting agentStub for agentId: xxx-yyy-zzz
-[QUEUE_COST_EVENT] templateSelection - Got agentStub: true
-[QUEUE_COST_EVENT] templateSelection - Calling queueCostEvent on stub
-[QUEUE_COST_EVENT] templateSelection - Successfully queued event
-```
-
-### blueprint:
-```
-[BROADCAST_COST] blueprint - Called with type: money_flow_event hasData: true
-[BROADCAST_COST] blueprint - Calling queueCostEvent
-[QUEUE_COST_EVENT] blueprint - Starting { agentId: '...', eventKeys: [...] }
 [QUEUE_COST_EVENT] blueprint - Getting agentStub for agentId: xxx-yyy-zzz
-[QUEUE_COST_EVENT] blueprint - Got agentStub: true
-[QUEUE_COST_EVENT] blueprint - Calling queueCostEvent on stub
-[QUEUE_COST_EVENT] blueprint - Successfully queued event
+                                                               ↑↑↑ SOLLTE JETZT WERT HABEN!
 ```
 
-## ❓ Diagnose-Szenarien
+### Browser Console:
+Jetzt sollten **10 von 12 Events** ankommen:
+- ✅ templateSelection
+- ✅ **blueprint** (NEU! 🎉)
+- ❌ projectSetup (kommt 2x, eines fehlt noch)
+- ❌ firstPhaseImplementation (fehlt noch)
+- ✅ phaseImplementation
+- ✅ codeReview (2x)
+- ✅ fileRegeneration (4x)
 
-### 1. Keine Logs
-→ `broadcastCost` wird nicht aufgerufen  
-→ Problem in `executeInference` / `core.ts`
+## 🎯 Nächste Schritte
 
-### 2. "[BROADCAST_COST]" aber kein "[QUEUE_COST_EVENT]"
-→ Type-Check `type === 'money_flow_event'` schlägt fehl  
-→ Falscher Event-Type wird übergeben
+**Noch 2 Events fehlen:**
+1. projectSetup (eines von zwei)
+2. firstPhaseImplementation
 
-### 3. "[QUEUE_COST_EVENT] Starting" dann ERROR
-→ Fehler beim Holen von agentStub oder queueCostEvent  
-→ Error-Details zeigen exakte Fehlerstelle
+Diese nutzen wahrscheinlich AUCH `this.state.sessionId` oder ähnliche Patterns. Können wir nach v50 Test angehen!
 
-### 4. "Successfully queued" aber kein Frontend Event
-→ queueCostEvent funktioniert, Event geht danach verloren  
-→ Problem in CodeGenObject oder WebSocket-Broadcast
+## 📝 Version Info
 
-## 🎯 Version Info
-
-- **Version:** v46 (KORRIGIERT)
-- **Basis:** v45 (funktionierende Version)
+- **Version:** v50 "Minestrone" 🍲
+- **Basis:** v45 + v46 Debug-Logs
 - **Datum:** 2025-12-29
-- **Änderung:** NUR Debug-Logging hinzugefügt
-- **Betroffene Dateien:** 2 (blueprint.ts, templateSelector.ts)
-- **TypeScript Kompatibilität:** ✅ 100% kompatibel mit v45
+- **Fix:** 1 Zeile geändert
+- **Betroffene Datei:** worker/agents/core/simpleGeneratorAgent.ts (Zeile 285)
+- **Status:** Ready to deploy! 🚀
