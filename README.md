@@ -2,6 +2,7 @@
 
 ## 🎯 Das Problem (gefunden durch v46 Debug-Logs)
 
+
 **Blueprint Events kamen nicht im Frontend an, weil:**
 
 ```
