@@ -1,4 +1,4 @@
-# VibeSDK v46 - Money Flow Debug Enhancement
+# VibeSDK v46 - Money Flow Debug Enhancement (KORRIGIERT)
 
 ## 🔍 Problem Summary
 Von 12 Events die an OpenRouter gesendet werden, kommen nur 9 im Frontend (WebSocket) an.
@@ -10,10 +10,16 @@ Von 12 Events die an OpenRouter gesendet werden, kommen nur 9 im Frontend (WebSo
 
 **Muster:** Alle fehlenden Events nutzen `queueCostEvent()` statt direktem `agent.broadcast()`
 
+## ✅ Was ist v46?
+
+**v46 = v45 + Debug-Logging**
+
+Diese Version basiert auf der **funktionierenden v45** und fügt NUR Debug-Logging hinzu.
+**KEINE** strukturellen Änderungen, **KEINE** neuen Imports, **KEINE** Type-Änderungen.
+
 ## 🎯 Änderungen in v46
 
-### Debug Logging hinzugefügt
-Beide Dateien (`blueprint.ts` und `templateSelector.ts`) erhalten **umfangreiches Debug-Logging** in der `queueCostEvent` Funktion:
+### Debug Logging in queueCostEvent()
 
 ```typescript
 const queueCostEvent = async (event: any) => {
@@ -42,7 +48,8 @@ const queueCostEvent = async (event: any) => {
 };
 ```
 
-Zusätzliches Logging in `broadcastCost`:
+### Debug Logging in broadcastCost()
+
 ```typescript
 const broadcastCost = async (type: string, data: any) => {
     console.log('[BROADCAST_COST] blueprint - Called with type:', type, 'hasData:', !!data);
@@ -54,79 +61,81 @@ const broadcastCost = async (type: string, data: any) => {
 ```
 
 ### Geänderte Dateien
-1. **worker/agents/planning/blueprint.ts**
+1. **worker/agents/planning/blueprint.ts** (basiert auf v45)
    - Erweiterte Debug-Logs in `queueCostEvent()`
    - Erweiterte Debug-Logs in `broadcastCost()`
 
-2. **worker/agents/planning/templateSelector.ts**
+2. **worker/agents/planning/templateSelector.ts** (basiert auf v45)
    - Erweiterte Debug-Logs in `queueCostEvent()`
    - Erweiterte Debug-Logs in `broadcastCost()`
 
 ## 📋 Deployment-Anleitung
 
-### 1. Dateien nach GitHub hochladen
+### 1. Dateien ersetzen
+
 ```bash
-# In deinem lokalen vibesdk-viber-production Repository:
+# Im vibesdk-viber-production Repository:
 cd worker/agents/planning/
 
-# Backup der alten Dateien (optional)
+# Optional: Backup
 cp blueprint.ts blueprint.ts.v45.backup
 cp templateSelector.ts templateSelector.ts.v45.backup
 
-# Neue Dateien aus v46 kopieren
-# (Dateien aus diesem v46-money-flow-debug Ordner)
+# v46 Dateien kopieren
 cp /path/to/v46-money-flow-debug/worker/agents/planning/blueprint.ts .
 cp /path/to/v46-money-flow-debug/worker/agents/planning/templateSelector.ts .
+```
 
-# Commit und Push
+### 2. Build testen (lokal)
+
+```bash
+# Im Repository Root:
+bun run build
+```
+
+**Sollte ohne Errors durchlaufen!** Falls Errors → v46 nicht korrekt kopiert.
+
+### 3. Git Commit & Push
+
+```bash
 git add worker/agents/planning/blueprint.ts worker/agents/planning/templateSelector.ts
-git commit -m "v46: Add comprehensive debug logging to queueCostEvent in blueprint and templateSelector"
+git commit -m "v46: Add debug logging to queueCostEvent (based on v45)"
 git push origin main
 ```
 
-### 2. Cloudflare Build Cache löschen
-⚠️ **KRITISCH:** Cloudflare Build Cache **MUSS** gelöscht werden!
+### 4. Cloudflare Deploy
 
 ```bash
-# Im vibesdk-viber-production Root-Verzeichnis:
 wrangler deploy --config wrangler.jsonc
 ```
 
-Falls das nicht hilft:
-```bash
-# Cache manuell löschen
-rm -rf .wrangler
-wrangler deploy --config wrangler.jsonc
-```
+**WICHTIG:** Build Cache wird automatisch gecleart beim Deploy.
 
-### 3. Neues Projekt erstellen und Logs prüfen
+### 5. Testen
 
-Nach dem Deploy:
 1. ✅ Gehe zu https://vibesdk.viber.lol
-2. ✅ Erstelle ein **neues Projekt** (z.B. "make a simple todo app")
-3. ✅ Öffne **Cloudflare Dashboard** → Workers & Pages → viber-production → Logs
+2. ✅ Erstelle **neues Projekt** (z.B. "make a simple todo app")
+3. ✅ Cloudflare Dashboard → Workers & Pages → viber-production → Logs
 4. ✅ **Live Logs** aktivieren
 
 ## 🔎 Erwartete Log-Ausgaben
 
-Nach dem Erstellen eines neuen Projekts solltest du in den Cloudflare Logs sehen:
-
-### Für templateSelection:
+### templateSelection:
 ```
 [BROADCAST_COST] templateSelection - Called with type: money_flow_event hasData: true
 [BROADCAST_COST] templateSelection - Calling queueCostEvent
-[QUEUE_COST_EVENT] templateSelection - Starting { agentId: '...', eventKeys: [...], eventSample: '...' }
+[QUEUE_COST_EVENT] templateSelection - Starting { agentId: '...', eventKeys: [...] }
 [QUEUE_COST_EVENT] templateSelection - Getting agentStub for agentId: xxx-yyy-zzz
 [QUEUE_COST_EVENT] templateSelection - Got agentStub: true
 [QUEUE_COST_EVENT] templateSelection - Calling queueCostEvent on stub
 [QUEUE_COST_EVENT] templateSelection - Successfully queued event
 ```
 
-### Für blueprint:
+### blueprint:
 ```
 [BROADCAST_COST] blueprint - Called with type: money_flow_event hasData: true
 [BROADCAST_COST] blueprint - Calling queueCostEvent
-[QUEUE_COST_EVENT] blueprint - Starting { agentId: '...', eventKeys: [...], eventSample: '...' }
+[QUEUE_COST_EVENT] blueprint - Starting { agentId: '...', eventKeys: [...] }
 [QUEUE_COST_EVENT] blueprint - Getting agentStub for agentId: xxx-yyy-zzz
 [QUEUE_COST_EVENT] blueprint - Got agentStub: true
 [QUEUE_COST_EVENT] blueprint - Calling queueCostEvent on stub
@@ -135,48 +144,27 @@ Nach dem Erstellen eines neuen Projekts solltest du in den Cloudflare Logs sehen
 
 ## ❓ Diagnose-Szenarien
 
-### Szenario 1: Logs erscheinen NICHT
-**Bedeutet:** `broadcastCost` wird nicht aufgerufen
-**Problem:** executeInference ruft broadcast callback nicht auf
+### 1. Keine Logs
+→ `broadcastCost` wird nicht aufgerufen  
+→ Problem in `executeInference` / `core.ts`
 
-### Szenario 2: "[BROADCAST_COST] ... Called" erscheint, aber "[QUEUE_COST_EVENT] ..." fehlt
-**Bedeutet:** broadcastCost wird aufgerufen, aber queueCostEvent nicht
-**Problem:** `if (type === 'money_flow_event')` Bedingung schlägt fehl
+### 2. "[BROADCAST_COST]" aber kein "[QUEUE_COST_EVENT]"
+→ Type-Check `type === 'money_flow_event'` schlägt fehl  
+→ Falscher Event-Type wird übergeben
 
-### Szenario 3: "[QUEUE_COST_EVENT] ... Starting" erscheint, dann ERROR
-**Bedeutet:** queueCostEvent wird aufgerufen, schlägt aber fehl
-**Problem:** Fehler beim Holen von agentStub oder beim Aufruf von queueCostEvent
-**→ Error-Details zeigen wo genau es fehlschlägt**
+### 3. "[QUEUE_COST_EVENT] Starting" dann ERROR
+→ Fehler beim Holen von agentStub oder queueCostEvent  
+→ Error-Details zeigen exakte Fehlerstelle
 
-### Szenario 4: "Successfully queued event" erscheint, Event kommt trotzdem nicht im Frontend an
-**Bedeutet:** queueCostEvent wird erfolgreich aufgerufen, Event geht danach verloren
-**Problem:** Liegt in CodeGenObject.queueCostEvent() oder WebSocket-Broadcast
+### 4. "Successfully queued" aber kein Frontend Event
+→ queueCostEvent funktioniert, Event geht danach verloren  
+→ Problem in CodeGenObject oder WebSocket-Broadcast
 
-## 📊 Browser Console Check
+## 🎯 Version Info
 
-Parallel solltest du auch die **Browser Console** prüfen:
-1. ✅ F12 → Console Tab öffnen
-2. ✅ Filtern nach "money_flow_event" oder "Unhandled message"
-3. ✅ Zählen welche Events ankommen
-
-## 🎯 Nächste Schritte nach v46
-
-Sobald du die v46 Logs geprüft hast, können wir basierend auf den Ergebnissen entscheiden:
-
-1. **Wenn `broadcastCost` nicht aufgerufen wird:**
-   - Problem liegt in `executeInference` oder `core.ts`
-   - Agent-Objekt kommt nicht richtig durch
-
-2. **Wenn `queueCostEvent` fehlschlägt:**
-   - Problem liegt bei `CodeGenObject.get()` oder `agentStub.queueCostEvent()`
-   - Möglicherweise timing issue oder falscher agentId
-
-3. **Wenn alles erfolgreich ist, Event aber nicht ankommt:**
-   - Problem liegt im CodeGenObject Durable Object
-   - WebSocket Broadcast funktioniert nicht wie erwartet
-
-## 📝 Version Info
-- **Version:** v46
-- **Änderungsdatum:** 2025-12-29
-- **Hauptziel:** Debugging von queueCostEvent für blueprint & templateSelector
+- **Version:** v46 (KORRIGIERT)
+- **Basis:** v45 (funktionierende Version)
+- **Datum:** 2025-12-29
+- **Änderung:** NUR Debug-Logging hinzugefügt
 - **Betroffene Dateien:** 2 (blueprint.ts, templateSelector.ts)
+- **TypeScript Kompatibilität:** ✅ 100% kompatibel mit v45

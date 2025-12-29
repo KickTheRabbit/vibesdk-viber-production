@@ -1,19 +1,21 @@
-VERSION: v46
+VERSION: v46 (CORRECTED)
+BASE: v45 (working version)
 DATE: 2025-12-29
-PURPOSE: Comprehensive debug logging for queueCostEvent in blueprint and templateSelector
+PURPOSE: Add debug logging to queueCostEvent WITHOUT changing any functionality
 
 CHANGES:
-- Added detailed debug logging to queueCostEvent() function
-- Added debug logging to broadcastCost() wrapper
-- Logs track: agentId, agentStub creation, method calls, success/errors
-- Helps diagnose why blueprint/templateSelection/firstPhaseImplementation events don't reach frontend
+- Based on v45 (NOT rewritten from scratch)
+- Added debug logging to queueCostEvent() in blueprint.ts
+- Added debug logging to queueCostEvent() in templateSelector.ts
+- Added debug logging to broadcastCost() wrapper in both files
+- NO structural changes, NO type changes, NO import changes
 
 FILES MODIFIED:
-1. worker/agents/planning/blueprint.ts
-2. worker/agents/planning/templateSelector.ts
+1. worker/agents/planning/blueprint.ts (v45 + debug logs)
+2. worker/agents/planning/templateSelector.ts (v45 + debug logs)
 
-DEPLOYMENT NOTES:
-- MUST clear Cloudflare build cache after deploy
+DEPLOYMENT:
+- Should compile without errors (same types as v45)
+- Deploy with: wrangler deploy --config wrangler.jsonc
 - Test with new project creation
 - Check Cloudflare Worker logs for debug output
-- Compare browser console events (should see all events if fix works)

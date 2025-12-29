@@ -111,29 +111,49 @@ const SYSTEM_PROMPT = `<ROLE>
         - **Animation Libraries:** Framer Motion, React Spring for smooth interactions
         - **Visual Enhancement:** Packages for gradients, patterns, visual effects
         - **Image/Media:** Optimization and display libraries for beautiful media presentation
-    • **Framework Selection Strategy:** Choose frameworks and libraries that minimize development effort while maximizing visual impact:
-        - Prefer comprehensive UI component libraries over building from scratch
-        - Select battle-tested libraries with excellent documentation
-        - Prioritize libraries with TypeScript support and active maintenance
-        - Balance between powerful features and bundle size considerations
+    • **SHADCN DESIGN SYSTEM:** Build exclusively with shadcn/ui components, but enhance them with:
+        - Beautiful color variants and visual treatments
+        - Sophisticated hover and interactive states
+        - Consistent spacing and visual rhythm
+        - Custom styling that maintains component integrity
+    • **ADVANCED STYLING:** Use Tailwind CSS utilities to create:
+        - Sophisticated color schemes and gradients
+        - Beautiful shadows, borders, and visual depth
+        - Smooth transitions and micro-interactions
+        - Professional typography and spacing systems
+    • **LAYOUT MASTERY:** Design layouts with visual sophistication:
+        - Perfect proportions and visual balance
+        - Strategic use of white space and breathing room
+        - Clear visual hierarchy and information flow
+        - Beautiful responsive behaviors at all breakpoints
+    **RECOMMENDED VISUAL ENHANCEMENT FRAMEWORKS:**
+    - **UI/Animation:** framer-motion, react-spring, @radix-ui/react-*
+    - **Icons:** lucide-react, @radix-ui/react-icons, heroicons
+    - **Visual Effects:** react-intersection-observer, react-parallax
+    - **Charts/Data Viz:** recharts, @tremor/react (if data visualization needed)
+    - **Media/Images:** next/image optimizations, react-image-gallery
+    Suggest whatever additional frameworks are needed to achieve visual excellence.
 </KEY GUIDELINES>
 
-<STARTING_TEMPLATE>
+${STRATEGIES.FRONTEND_FIRST_PLANNING}
+
+**Make sure ALL the files that need to be created or modified are explicitly written out in the blueprint.**
+<STARTING TEMPLATE>
+{{template}}
+
+<TEMPLATE_CORE_FILES>
+**SHADCN COMPONENTS, Error boundary components and use-toast hook ARE PRESENT AND INSTALLED BUT EXCLUDED FROM THESE FILES DUE TO CONTEXT SPAM**
 {{filesText}}
-</STARTING_TEMPLATE>
+</TEMPLATE_CORE_FILES>
 
-<FILE_TREE>
+<TEMPLATE_FILE_TREE>
+**Use these files as a reference for the file structure, components and hooks that are present**
 {{fileTreeText}}
-</FILE_TREE>
+</TEMPLATE_FILE_TREE>
 
-<CONSTRAINTS>
-- **NEVER** use placeholders like {{ }}, [ ], < >, etc. in actual application code - these are for instructions only
-- **AVOID** non-standard or rarely-used libraries unless there's a compelling reason
-- **PRIORITIZE** widely-adopted, well-maintained libraries with good TypeScript support
-- **ENSURE** all dependencies work without API keys or environment setup
-- **MAINTAIN** focus on visual excellence in every component and interaction
-</CONSTRAINTS>
-`;
+Preinstalled dependencies:
+{{dependencies}}
+</STARTING TEMPLATE>`;
 
 export interface BlueprintGenerationArgs {
     env: Env;
@@ -157,7 +177,7 @@ export interface BlueprintGenerationArgs {
  */
 // Update function signature and system prompt
 export async function generateBlueprint({ env, inferenceContext, query, language, frameworks, templateDetails, templateMetaInfo, images, agentId, stream }: BlueprintGenerationArgs): Promise<Blueprint> {
-    // Helper to queue cost events - WITH COMPREHENSIVE DEBUG LOGGING
+    // Helper to queue cost events
     const queueCostEvent = async (event: any) => {
         console.log('[QUEUE_COST_EVENT] blueprint - Starting', {
             agentId,

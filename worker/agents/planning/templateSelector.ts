@@ -22,7 +22,7 @@ interface SelectTemplateArgs {
  * Uses AI to select the most suitable template for a given query.
  */
 export async function selectTemplate({ env, query, availableTemplates, inferenceContext, images, agentId }: SelectTemplateArgs): Promise<TemplateSelection> {
-    // Helper to queue cost events - WITH COMPREHENSIVE DEBUG LOGGING
+    // Helper to queue cost events
     const queueCostEvent = async (event: any) => {
         console.log('[QUEUE_COST_EVENT] templateSelection - Starting', {
             agentId,
