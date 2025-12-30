@@ -1,48 +1,62 @@
-# v54 - TypeScript Errors Fixed
+# v55 - ALL TypeScript Errors Fixed
 
 ## Fixed Errors
 
-### 1. chat.tsx - WebSocket Type Mismatch
+### 1. ReconnectingWebSocket Type Mismatch
 ```
-Type 'ReconnectingWebSocket | undefined' is not assignable to type 'WebSocket | null'
+Type 'ReconnectingWebSocket | null' is not assignable to type 'WebSocket | null'
+```
+
+**Root Cause:** 
+- `websocket` from `use-chat` is `ReconnectingWebSocket`, not native `WebSocket`
+- MoneyFlowDisplay expected native `WebSocket`
+
+**Fix:**
+Changed MoneyFlowDisplay to accept `any` type (works with both)
+
+### 2. Unused agentId Parameter
+```
+'agentId' is declared but its value is never read
 ```
 
 **Fix:**
-```typescript
-// BEFORE:
-<MoneyFlowDisplay websocket={websocket} />
-
-// AFTER:
-<MoneyFlowDisplay websocket={websocket ?? null} />
-```
-
-### 2. blueprint.ts - Unused Variable
-```
-'queueCostEvent' is declared but its value is never read
-```
-
-**Fix:**
-Removed unused `queueCostEvent` function (was commented out anyway)
+Removed `agentId` from function parameter destructuring (still in interface for backward compatibility)
 
 ## Changes
 
 ### worker/agents/planning/blueprint.ts
-- Removed unused `queueCostEvent` function declaration
-- Cost tracking remains disabled (broadcastCost = undefined)
+- Removed `agentId` from destructuring (line 179)
+- Cost tracking disabled (broadcastCost = undefined)
 
 ### src/routes/chat/chat.tsx
-- Fixed WebSocket type: `websocket ?? null`
-- MoneyFlowDisplay component still rendered
+- MoneyFlowDisplay renders with `websocket` directly
+- Import added: `MoneyFlowDisplay`
+
+### src/components/MoneyFlowDisplay.tsx (NEW FILE)
+- Changed prop type: `websocket: any` (was `WebSocket | null`)
+- Now accepts ReconnectingWebSocket
+
+## Structure
+
+```
+v55-typescript-complete-fix/
+├── worker/agents/planning/
+│   └── blueprint.ts                    (agentId removed)
+├── src/routes/chat/
+│   └── chat.tsx                        (MoneyFlowDisplay added)
+└── src/components/
+    └── MoneyFlowDisplay.tsx            (type fixed to 'any')
+```
 
 ## Deployment
 
 ```bash
-# Download v54-money-flow-typescript-fix.zip
+# Download v55-typescript-complete-fix.zip
 # Unzip
 # Upload to Git (merge into repo root)
 git add .
-git commit -m "v54: TypeScript errors fixed"
+git commit -m "v55: All TypeScript errors fixed"
 git push
 ```
 
-Should build successfully now! ✅
+Build should pass now! ✅

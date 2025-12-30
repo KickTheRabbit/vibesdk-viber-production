@@ -176,7 +176,7 @@ export interface BlueprintGenerationArgs {
  * Generate a blueprint for the application based on user prompt
  */
 // Update function signature and system prompt
-export async function generateBlueprint({ env, inferenceContext, query, language, frameworks, templateDetails, templateMetaInfo, images, agentId, stream }: BlueprintGenerationArgs): Promise<Blueprint> {
+export async function generateBlueprint({ env, inferenceContext, query, language, frameworks, templateDetails, templateMetaInfo, images, stream }: BlueprintGenerationArgs): Promise<Blueprint> {
     // Cost tracking disabled - will be fixed in Universal Agent refactor
     // const queueCostEvent = async (event: any) => { ... };
     

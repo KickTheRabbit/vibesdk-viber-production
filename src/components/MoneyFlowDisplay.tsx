@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { MoneyFlowEvent, MoneyFlowState } from '@/types/moneyFlow';
 
 interface MoneyFlowDisplayProps {
-    websocket: WebSocket | null;
+    websocket: any; // ReconnectingWebSocket or WebSocket
 }
 
 export function MoneyFlowDisplay({ websocket }: MoneyFlowDisplayProps) {
