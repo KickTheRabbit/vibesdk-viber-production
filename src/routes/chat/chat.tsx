@@ -1103,7 +1103,7 @@ export default function Chat() {
 			/>
 
 			{/* Money Flow Tracker */}
-			<MoneyFlowDisplay websocket={websocket} />
+			<MoneyFlowDisplay websocket={websocket ?? null} />
 		</div>
 
 		</div>

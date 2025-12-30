@@ -177,15 +177,8 @@ export interface BlueprintGenerationArgs {
  */
 // Update function signature and system prompt
 export async function generateBlueprint({ env, inferenceContext, query, language, frameworks, templateDetails, templateMetaInfo, images, agentId, stream }: BlueprintGenerationArgs): Promise<Blueprint> {
-    // Helper to queue cost events
-    const queueCostEvent = async (event: any) => {
-        try {
-            const agentStub = env.CodeGenObject.get(env.CodeGenObject.idFromName(agentId));
-            await agentStub.queueCostEvent(event);
-        } catch (error) {
-            console.error('[QUEUE_COST_ERROR]', error);
-        }
-    };
+    // Cost tracking disabled - will be fixed in Universal Agent refactor
+    // const queueCostEvent = async (event: any) => { ... };
     
     try {
         logger.info("Generating application blueprint", { query, queryLength: query.length, imagesCount: images?.length || 0 });

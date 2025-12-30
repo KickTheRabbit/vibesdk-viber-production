@@ -1,61 +1,48 @@
-# v53 - Money Flow Tracker Complete Fix
+# v54 - TypeScript Errors Fixed
+
+## Fixed Errors
+
+### 1. chat.tsx - WebSocket Type Mismatch
+```
+Type 'ReconnectingWebSocket | undefined' is not assignable to type 'WebSocket | null'
+```
+
+**Fix:**
+```typescript
+// BEFORE:
+<MoneyFlowDisplay websocket={websocket} />
+
+// AFTER:
+<MoneyFlowDisplay websocket={websocket ?? null} />
+```
+
+### 2. blueprint.ts - Unused Variable
+```
+'queueCostEvent' is declared but its value is never read
+```
+
+**Fix:**
+Removed unused `queueCostEvent` function (was commented out anyway)
 
 ## Changes
 
-### Backend: Blueprint Cost Tracking DEAKTIVIERT
-**File:** `worker/agents/planning/blueprint.ts`
-- Blueprint cost tracking disabled (broken architecture)
-- Will be fixed in Universal Agent refactor
+### worker/agents/planning/blueprint.ts
+- Removed unused `queueCostEvent` function declaration
+- Cost tracking remains disabled (broadcastCost = undefined)
 
-### Frontend: MoneyFlowDisplay Component AKTIVIERT  
-**File:** `src/routes/chat/chat.tsx`
-- Import added: `import { MoneyFlowDisplay } from '@/components/MoneyFlowDisplay';`
-- Component rendered: `<MoneyFlowDisplay websocket={websocket} />`
-- Position: Fixed bottom-right corner
-
-## Result
-
-**8 von 12 Events funktionieren:**
-- templateSelection ✅
-- projectSetup ✅
-- firstPhaseImplementation ✅
-- phaseImplementation ✅
-- codeReview ✅
-- fileRegeneration ✅
-- (phaseGeneration, fastCodeFixer, etc. - wenn ausgeführt) ✅
-
-**Blueprint deaktiviert:**
-- blueprint ❌ (broken pre-agent timing, fix in Universal Agent)
+### src/routes/chat/chat.tsx
+- Fixed WebSocket type: `websocket ?? null`
+- MoneyFlowDisplay component still rendered
 
 ## Deployment
 
 ```bash
-# Download v53-money-flow-complete.zip
+# Download v54-money-flow-typescript-fix.zip
 # Unzip
-# Upload to Git (merge into your repo root)
+# Upload to Git (merge into repo root)
 git add .
-git commit -m "v53: Money Flow Tracker - complete fix"
+git commit -m "v54: TypeScript errors fixed"
 git push
 ```
 
-## Expected Result
-
-- Browser Console: NO "Unhandled message" warnings
-- Visual: Money Flow Tracker bottom-right corner showing costs
-- Cloudflare Logs: `[TRACKING] 🎯 blueprint - DISABLED`
-
-## Structure
-
-```
-v53-money-flow-complete/
-├── worker/
-│   └── agents/
-│       └── planning/
-│           └── blueprint.ts          (Backend - blueprint disabled)
-└── src/
-    └── routes/
-        └── chat/
-            └── chat.tsx              (Frontend - MoneyFlowDisplay added)
-```
-
-Upload this entire folder structure to your repo root!
+Should build successfully now! ✅
