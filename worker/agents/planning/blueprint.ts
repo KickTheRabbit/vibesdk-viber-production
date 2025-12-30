@@ -179,27 +179,11 @@ export interface BlueprintGenerationArgs {
 export async function generateBlueprint({ env, inferenceContext, query, language, frameworks, templateDetails, templateMetaInfo, images, agentId, stream }: BlueprintGenerationArgs): Promise<Blueprint> {
     // Helper to queue cost events
     const queueCostEvent = async (event: any) => {
-        console.log('[QUEUE_COST_EVENT] blueprint - Starting', {
-            agentId,
-            eventKeys: Object.keys(event || {}),
-            eventSample: event ? JSON.stringify(event).substring(0, 200) : 'null'
-        });
-        
         try {
-            console.log('[QUEUE_COST_EVENT] blueprint - Getting agentStub for agentId:', agentId);
             const agentStub = env.CodeGenObject.get(env.CodeGenObject.idFromName(agentId));
-            console.log('[QUEUE_COST_EVENT] blueprint - Got agentStub:', !!agentStub);
-            
-            console.log('[QUEUE_COST_EVENT] blueprint - Calling queueCostEvent on stub');
             await agentStub.queueCostEvent(event);
-            console.log('[QUEUE_COST_EVENT] blueprint - Successfully queued event');
         } catch (error) {
-            console.error('[QUEUE_COST_EVENT] blueprint - ERROR:', {
-                error: error,
-                errorMessage: error instanceof Error ? error.message : String(error),
-                errorStack: error instanceof Error ? error.stack : undefined,
-                agentId
-            });
+            console.error('[QUEUE_COST_ERROR]', error);
         }
     };
     
@@ -251,15 +235,15 @@ export async function generateBlueprint({ env, inferenceContext, query, language
         //     reasoningEffort = undefined;
         // }
 
-            console.log("[TRACKING] 🎯 blueprint - START");
+            console.log("[TRACKING] 🎯 blueprint - DISABLED (broken architecture, will fix in Universal Agent)");
         
-        const broadcastCost = async (type: string, data: any) => {
-            console.log('[BROADCAST_COST] blueprint - Called with type:', type, 'hasData:', !!data);
-            if (type === 'money_flow_event') {
-                console.log('[BROADCAST_COST] blueprint - Calling queueCostEvent');
-                await queueCostEvent(data);
-            }
-        };
+        // DISABLED: Blueprint cost tracking disabled due to agent initialization timing issues
+        // Will be fixed in Universal Agent refactor
+        const broadcastCost = undefined; // async (type: string, data: any) => {
+        //     if (type === 'money_flow_event') {
+        //         await queueCostEvent(data);
+        //     }
+        // };
         
         const { object: results } = await executeInference({
             env,

@@ -34,6 +34,7 @@ import { useImageUpload } from '@/hooks/use-image-upload';
 import { useDragDrop } from '@/hooks/use-drag-drop';
 import { ImageAttachmentPreview } from '@/components/image-attachment-preview';
 import { createAIMessage } from './utils/message-helpers';
+import { MoneyFlowDisplay } from '@/components/MoneyFlowDisplay';
 
 export default function Chat() {
 	const { chatId: urlChatId } = useParams();
@@ -1100,6 +1101,9 @@ export default function Chat() {
 				exportResult={githubExport.result}
 				onRetry={githubExport.retry}
 			/>
+
+			{/* Money Flow Tracker */}
+			<MoneyFlowDisplay websocket={websocket} />
 		</div>
 
 		</div>
