@@ -1,6 +1,5 @@
 # 💰 Money Tracker v12
 
-
 ## 🔧 FIXED: TypeScript Type Errors!
 
 **Problem in v11:** 
