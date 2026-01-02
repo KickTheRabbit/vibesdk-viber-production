@@ -87,7 +87,7 @@ export function AgentConfigPanel({}: AgentConfigPanelProps) {
 			author: 'system',
 			description: 'Default blueprint agent compatible with current VibeSDK workflow',
 			tags: ['planning', 'architecture', 'vibesdk-default'],
-			icon: 'ðŸ"',
+			icon: 'ICON',
 			
 			// System Prompt (simplified for v1)
 			systemPrompt: {
@@ -455,7 +455,7 @@ export function AgentConfigPanel({}: AgentConfigPanelProps) {
 					
 					<div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
 						<h4 className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">
-							ðŸš€ OpenAgent V1
+							CustomVibeAgent V1
 						</h4>
 						<p className="text-xs text-text-tertiary">
 							Universal Agent system with configurable AI workflows. 

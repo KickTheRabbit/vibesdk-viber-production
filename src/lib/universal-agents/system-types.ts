@@ -29,7 +29,7 @@ export const BlueprintTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.PLANNING,
   displayName: 'Blueprint Agent',
   description: 'Analyzes requirements and creates detailed project structure plans with features, components, and dependencies.',
-  icon: 'ðŸ"',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.CLAUDE_SONNET_4_5,
@@ -69,7 +69,7 @@ export const TemplateSelectorTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.PLANNING,
   displayName: 'Template Selector',
   description: 'Analyzes project requirements and selects the most appropriate template or boilerplate.',
-  icon: 'ðŸ"‹',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.CLAUDE_SONNET_4_5,
@@ -109,7 +109,7 @@ export const PhaseGeneratorTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.PLANNING,
   displayName: 'Phase Generator',
   description: 'Breaks down blueprint into manageable implementation phases with clear dependencies and priorities.',
-  icon: 'ðŸ"…',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.CLAUDE_SONNET_4_5,
@@ -189,7 +189,7 @@ export const FileRegeneratorTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.CODE_GENERATION,
   displayName: 'File Regenerator',
   description: 'Re-generates specific files with requested modifications while maintaining consistency with project architecture.',
-  icon: 'ðŸ"',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.CLAUDE_SONNET_4_5,
@@ -229,7 +229,7 @@ export const CodeReviewTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.ANALYSIS,
   displayName: 'Code Review',
   description: 'Performs comprehensive code review checking for security issues, performance problems, and code quality.',
-  icon: 'ðŸ"',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.CLAUDE_SONNET_4_5,
@@ -269,7 +269,7 @@ export const ScreenshotAnalyzerTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.ANALYSIS,
   displayName: 'Screenshot Analyzer',
   description: 'Analyzes UI screenshots or mockups to extract design specifications and implementation requirements.',
-  icon: 'ðŸ"¸',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.CLAUDE_SONNET_4_5,  // Vision required
@@ -309,7 +309,7 @@ export const CodeFixerTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.CODE_FIXING,
   displayName: 'Code Fixer',
   description: 'Analyzes errors and fixes code issues while maintaining code quality and architecture consistency.',
-  icon: 'ðŸ"§',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.CLAUDE_SONNET_4_5,
@@ -389,7 +389,7 @@ export const ConversationalTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.COMMUNICATION,
   displayName: 'Conversational Assistant',
   description: 'Handles natural language conversations, questions, and explanations about the project.',
-  icon: 'ðŸ'¬',
+  icon: 'ICON'¬',
   
   defaultLLM: {
     model: OpenRouterModels.GEMINI_2_5_FLASH_LITE,

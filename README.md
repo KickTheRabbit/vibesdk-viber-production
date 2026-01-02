@@ -1,4 +1,4 @@
-# OpenAgent V1
+# CustomVibeAgent V1
 
 Universal Agent Configuration System für VibeSDK Enhanced
 
@@ -8,9 +8,9 @@ Universal Agent Configuration System für VibeSDK Enhanced
 
 ---
 
-## Was ist OpenAgent?
+## Was ist CustomVibeAgent?
 
-OpenAgent ist das Universal Agent System für VibeSDK. Es ermöglicht:
+CustomVibeAgent ist das Universal Agent System für VibeSDK. Es ermöglicht:
 
 ✅ **Agent-Konfiguration via UI** - Keine Code-Änderungen nötig  
 ✅ **11 System-Types vordefiniert** - Blueprint, Code-Fixer, Review, etc.  
@@ -37,14 +37,11 @@ src/
     └── universal-agent.ts              # TypeScript Interfaces
 ```
 
-### Dokumentation
+### Integration Files
 
 ```
-README.md                               # Diese Datei
-INTEGRATION_GUIDE.md                    # Settings Integration
+INTEGRATION_GUIDE.md                    # Wie du es ins Settings Panel einbaust
 ```
-
-**WICHTIG:** Keine package.json Änderungen nötig - alle Dependencies existieren bereits!
 
 ---
 

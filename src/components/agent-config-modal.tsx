@@ -327,7 +327,7 @@ export function AgentConfigModal({ config, onSave, onClose }: AgentConfigModalPr
 								<Input
 									value={icon}
 									onChange={(e) => setIcon(e.target.value)}
-									placeholder="ðŸ""
+									placeholder="icon""
 								/>
 							</div>
 						</div>
@@ -385,7 +385,7 @@ export function AgentConfigModal({ config, onSave, onClose }: AgentConfigModalPr
 
 						<div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded">
 							<p className="text-sm text-text-tertiary">
-								ðŸ'¡ V1 uses simplified prompts. Advanced features (constraints, examples, etc.) 
+								V1 uses simplified prompts. Advanced features (constraints, examples, etc.)
 								coming in future versions.
 							</p>
 						</div>
