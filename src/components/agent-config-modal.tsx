@@ -7,8 +7,7 @@
  * Version: 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -35,13 +34,13 @@ import {
 	SystemAgentType,
 	AgentCategory,
 	ComplexityLevel,
+	OpenRouterModels,
 	generateAgentId,
 	getCategoryForType,
 } from '@/lib/universal-agents/agent-types';
 import {
 	SYSTEM_AGENT_TYPES,
 	getTypeDefinition,
-	OpenRouterModels,
 } from '@/lib/universal-agents/system-types';
 
 interface AgentConfigModalProps {
@@ -272,7 +271,7 @@ export function AgentConfigModal({ config, onSave, onClose }: AgentConfigModalPr
 										<SelectValue />
 									</SelectTrigger>
 									<SelectContent>
-										{SYSTEM_AGENT_TYPES.map((type) => (
+										{Object.keys(SYSTEM_AGENT_TYPES).map((type) => (
 											<SelectItem key={type} value={type}>
 												{type}
 											</SelectItem>

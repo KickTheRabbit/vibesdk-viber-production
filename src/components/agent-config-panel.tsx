@@ -7,7 +7,7 @@
  * Version: 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Copy, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,7 +33,6 @@ import {
 	ComplexityLevel,
 } from '@/lib/universal-agents/agent-types';
 import {
-	SYSTEM_AGENT_TYPES,
 	getTypeDefinition,
 } from '@/lib/universal-agents/system-types';
 
@@ -93,7 +92,7 @@ export function AgentConfigPanel({}: AgentConfigPanelProps) {
 			systemPrompt: {
 				role: 'You are an expert project architect and planner.',
 				task: 'Analyze user requirements and create detailed project blueprints with features, components, and technical specifications.',
-				outputFormat: 'JSON',
+				outputFormat: 'json',
 				communicationRules: null,
 				securityGuidelines: ['Core Security Rules'],
 				constraints: [

@@ -66,6 +66,10 @@ export interface DefaultLLMConfig {
     budget: number;
   };
   streaming: boolean;         // Show response as it generates
+  topP?: number;              // Nucleus sampling
+  frequencyPenalty?: number;  // Reduce repetition
+  presencePenalty?: number;   // Encourage new topics
+  stopSequences?: string[];   // Stop generation at these strings
 }
 
 /**
