@@ -74,31 +74,40 @@ export interface DefaultLLMConfig {
 
 /**
  * OpenRouter Model Identifiers
- * Full list: https://openrouter.ai/docs#models
+ * Complete list from VibeSDK OpenRouter integration
  */
 export const OpenRouterModels = {
-  // Anthropic
-  CLAUDE_OPUS_4_1: 'anthropic/claude-opus-4.1',
-  CLAUDE_SONNET_4_5: 'anthropic/claude-sonnet-4.5',
-  CLAUDE_HAIKU_4_5: 'anthropic/claude-haiku-4.5',
+  // Top Coding Models
+  QWEN3_CODER_480B: 'openrouter/qwen/qwen3-coder-480b',
+  GROK_CODE_FAST: 'openrouter/x-ai/grok-code-fast-1',
   
-  // Google
-  GEMINI_2_5_PRO: 'google/gemini-2.5-pro',
-  GEMINI_2_5_FLASH: 'google/gemini-2.5-flash',
-  GEMINI_2_5_FLASH_LITE: 'google/gemini-2.5-flash-lite',
+  // Gemini via OpenRouter (no token limits!)
+  GEMINI_2_5_PRO: 'openrouter/google/gemini-2.5-pro',
+  GEMINI_2_5_FLASH: 'openrouter/google/gemini-2.5-flash',
+  GEMINI_2_5_FLASH_LITE: 'openrouter/google/gemini-2.5-flash-lite',
+  GEMINI_2_0_FLASH: 'openrouter/google/gemini-2.0-flash',
   
-  // OpenAI
-  GPT_4O: 'openai/gpt-4o',
-  GPT_4O_MINI: 'openai/gpt-4o-mini',
+  // Claude via OpenRouter (latest!)
+  CLAUDE_4_5_SONNET: 'openrouter/anthropic/claude-4.5-sonnet-20250929',
+  CLAUDE_4_5_HAIKU: 'openrouter/anthropic/claude-4.5-haiku-20250320',
+  CLAUDE_4_SONNET: 'openrouter/anthropic/claude-4-sonnet-20250522',
+  CLAUDE_4_OPUS: 'openrouter/anthropic/claude-4-opus-20250514',
+  CLAUDE_3_5_SONNET: 'openrouter/anthropic/claude-3.5-sonnet',
   
-  // Meta
-  LLAMA_3_3_70B: 'meta-llama/llama-3.3-70b-instruct',
+  // GPT via OpenRouter
+  GPT_5_MINI: 'openrouter/openai/gpt-5-mini-2025-08-07',
+  GPT_4O: 'openrouter/openai/gpt-4o',
+  GPT_4O_MINI: 'openrouter/openai/gpt-4o-mini',
+  O1: 'openrouter/openai/o1',
+  O1_MINI: 'openrouter/openai/o1-mini',
   
-  // DeepSeek
-  DEEPSEEK_V3: 'deepseek/deepseek-v3',
+  // Reasoning Models
+  DEEPSEEK_R1: 'openrouter/deepseek/deepseek-r1',
+  DEEPSEEK_CHAT_V3_5: 'openrouter/deepseek/deepseek-chat-v3.5',
   
-  // Mistral
-  MISTRAL_LARGE: 'mistralai/mistral-large-2411'
+  // Other Popular Models
+  MISTRAL_LARGE: 'openrouter/mistralai/mistral-large-2411',
+  LLAMA_3_3_70B: 'openrouter/meta-llama/llama-3.3-70b-instruct'
 } as const;
 
 // ============================================================================

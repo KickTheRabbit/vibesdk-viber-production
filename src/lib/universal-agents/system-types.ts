@@ -32,7 +32,7 @@ export const BlueprintTypeDefinition: AgentTypeDefinition = {
   icon: 'ICON',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,
     temperature: 0.7,
     maxTokens: 16000,
     thinking: {
@@ -72,7 +72,7 @@ export const TemplateSelectorTypeDefinition: AgentTypeDefinition = {
   icon: 'ICON',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,
     temperature: 0.5,
     maxTokens: 4000,
     thinking: {
@@ -112,7 +112,7 @@ export const PhaseGeneratorTypeDefinition: AgentTypeDefinition = {
   icon: 'ICON',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,
     temperature: 0.6,
     maxTokens: 12000,
     thinking: {
@@ -152,7 +152,7 @@ export const PhaseImplementationTypeDefinition: AgentTypeDefinition = {
   icon: 'âš™ï¸',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,
     temperature: 0.2,
     maxTokens: 32000,
     thinking: {
@@ -192,7 +192,7 @@ export const FileRegeneratorTypeDefinition: AgentTypeDefinition = {
   icon: 'ICON',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,
     temperature: 0.2,
     maxTokens: 16000,
     thinking: {
@@ -232,7 +232,7 @@ export const CodeReviewTypeDefinition: AgentTypeDefinition = {
   icon: 'ICON',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,
     temperature: 0.3,
     maxTokens: 8000,
     thinking: {
@@ -272,7 +272,7 @@ export const ScreenshotAnalyzerTypeDefinition: AgentTypeDefinition = {
   icon: 'ICON',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,  // Vision required
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,  // Vision required
     temperature: 0.5,
     maxTokens: 8000,
     thinking: {
@@ -312,7 +312,7 @@ export const CodeFixerTypeDefinition: AgentTypeDefinition = {
   icon: 'ICON',
   
   defaultLLM: {
-    model: OpenRouterModels.CLAUDE_SONNET_4_5,
+    model: OpenRouterModels.CLAUDE_4_5_SONNET,
     temperature: 0.2,
     maxTokens: 16000,
     thinking: {
@@ -449,7 +449,7 @@ export const SYSTEM_AGENT_TYPES: Record<SystemAgentType, AgentTypeDefinition> = 
     
     // Defaults for custom - user should override
     defaultLLM: {
-      model: OpenRouterModels.CLAUDE_SONNET_4_5,
+      model: OpenRouterModels.CLAUDE_4_5_SONNET,
       temperature: 0.5,
       maxTokens: 8000,
       thinking: {
