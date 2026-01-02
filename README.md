@@ -1,4 +1,4 @@
-# CustomVibeAgent V2
+# CustomVibeAgent V1
 
 Universal Agent Configuration System für VibeSDK Enhanced
 

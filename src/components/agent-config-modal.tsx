@@ -327,7 +327,7 @@ export function AgentConfigModal({ config, onSave, onClose }: AgentConfigModalPr
 								<Input
 									value={icon}
 									onChange={(e) => setIcon(e.target.value)}
-									placeholder="icon""
+									placeholder="icon"
 								/>
 							</div>
 						</div>

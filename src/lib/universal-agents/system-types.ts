@@ -389,7 +389,7 @@ export const ConversationalTypeDefinition: AgentTypeDefinition = {
   category: AgentCategory.COMMUNICATION,
   displayName: 'Conversational Assistant',
   description: 'Handles natural language conversations, questions, and explanations about the project.',
-  icon: 'ICON'¬',
+  icon: 'ICON',
   
   defaultLLM: {
     model: OpenRouterModels.GEMINI_2_5_FLASH_LITE,
