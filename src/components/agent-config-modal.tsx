@@ -66,7 +66,7 @@ export function AgentConfigModal({ config, onSave, onClose }: AgentConfigModalPr
 	const [tags, setTags] = useState(config?.tags.join(', ') || '');
 	
 	// LLM config
-	const [model, setModel] = useState(config?.llm.model || OpenRouterModels.CLAUDE_4_5_SONNET);
+	const [model, setModel] = useState(config?.llm.model || OpenRouterModels.CLAUDE_SONNET_4_5);
 	const [temperature, setTemperature] = useState(config?.llm.temperature || 0.7);
 	const [maxTokens, setMaxTokens] = useState(config?.llm.maxTokens || 16000);
 	
@@ -399,76 +399,23 @@ export function AgentConfigModal({ config, onSave, onClose }: AgentConfigModalPr
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
-									{/* Top Coding Models */}
-									<SelectItem value={OpenRouterModels.QWEN3_CODER_480B}>
-										Qwen3 Coder 480B (Coding)
+									<SelectItem value={OpenRouterModels.ANTHROPIC_OPUS_4_1}>
+										Claude Opus 4.1
 									</SelectItem>
-									<SelectItem value={OpenRouterModels.GROK_CODE_FAST}>
-										Grok Code Fast (xAI)
+									<SelectItem value={OpenRouterModels.ANTHROPIC_SONNET_4_5}>
+										Claude Sonnet 4.5
 									</SelectItem>
-									
-									{/* Claude Models */}
-									<SelectItem value={OpenRouterModels.CLAUDE_4_OPUS}>
-										Claude 4 Opus
+									<SelectItem value={OpenRouterModels.ANTHROPIC_HAIKU_4_5}>
+										Claude Haiku 4.5
 									</SelectItem>
-									<SelectItem value={OpenRouterModels.CLAUDE_4_5_SONNET}>
-										Claude 4.5 Sonnet
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.CLAUDE_4_SONNET}>
-										Claude 4 Sonnet
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.CLAUDE_4_5_HAIKU}>
-										Claude 4.5 Haiku
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.CLAUDE_3_5_SONNET}>
-										Claude 3.5 Sonnet
-									</SelectItem>
-									
-									{/* Gemini Models */}
-									<SelectItem value={OpenRouterModels.GEMINI_2_5_PRO}>
+									<SelectItem value={OpenRouterModels.GOOGLE_GEMINI_2_5_PRO}>
 										Gemini 2.5 Pro
 									</SelectItem>
-									<SelectItem value={OpenRouterModels.GEMINI_2_5_FLASH}>
-										Gemini 2.5 Flash
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.GEMINI_2_5_FLASH_LITE}>
+									<SelectItem value={OpenRouterModels.GOOGLE_GEMINI_2_5_FLASH_LITE}>
 										Gemini 2.5 Flash Lite
 									</SelectItem>
-									<SelectItem value={OpenRouterModels.GEMINI_2_0_FLASH}>
-										Gemini 2.0 Flash
-									</SelectItem>
-									
-									{/* GPT Models */}
-									<SelectItem value={OpenRouterModels.GPT_5_MINI}>
-										GPT-5 Mini
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.GPT_4O}>
+									<SelectItem value={OpenRouterModels.OPENAI_GPT_4O}>
 										GPT-4o
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.GPT_4O_MINI}>
-										GPT-4o Mini
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.O1}>
-										O1 (Reasoning)
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.O1_MINI}>
-										O1 Mini (Reasoning)
-									</SelectItem>
-									
-									{/* Reasoning Models */}
-									<SelectItem value={OpenRouterModels.DEEPSEEK_R1}>
-										DeepSeek R1 (Reasoning)
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.DEEPSEEK_CHAT_V3_5}>
-										DeepSeek Chat v3.5
-									</SelectItem>
-									
-									{/* Other Models */}
-									<SelectItem value={OpenRouterModels.MISTRAL_LARGE}>
-										Mistral Large
-									</SelectItem>
-									<SelectItem value={OpenRouterModels.LLAMA_3_3_70B}>
-										Llama 3.3 70B
 									</SelectItem>
 								</SelectContent>
 							</Select>
