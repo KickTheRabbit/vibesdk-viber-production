@@ -66,7 +66,7 @@ export function AgentConfigModal({ config, onSave, onClose }: AgentConfigModalPr
 	const [tags, setTags] = useState(config?.tags.join(', ') || '');
 	
 	// LLM config
-	const [model, setModel] = useState(config?.llm.model || OpenRouterModels.CLAUDE_SONNET_4_5);
+	const [model, setModel] = useState(config?.llm.model || OpenRouterModels.CLAUDE_4_5_SONNET);
 	const [temperature, setTemperature] = useState(config?.llm.temperature || 0.7);
 	const [maxTokens, setMaxTokens] = useState(config?.llm.maxTokens || 16000);
 	

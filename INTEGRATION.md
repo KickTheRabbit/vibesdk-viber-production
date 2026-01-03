@@ -1,56 +1,58 @@
-# CustomVibeAgent V7 - Integration Instructions
+# CustomVibeAgent V7 - Integration Guide
 
-## Where to Add the Component
+## What's Included
 
-In `src/routes/settings/index.tsx`:
+All 21 OpenRouter models from your VibeSDK setup in a Settings UI panel.
 
-### Step 1: Add Import (at top of file, around line 13)
+## How to Integrate
+
+### Step 1: Add Import
+
+In `src/routes/settings/index.tsx`, add this import at the top (around line 13):
 
 ```typescript
 import { AgentConfigPanel } from '@/components/agent-config-panel';
 ```
 
-### Step 2: Add Component (after Model Configurations card, around line 678)
+### Step 2: Add Component
 
-Find this code:
-```typescript
-					</CardContent>
-				</Card>
-
-				{/* User Secrets Section */}
-				<Card id="secrets">
-```
-
-Add AgentConfigPanel BEFORE the "User Secrets Section":
+Find this section (around line 678):
 
 ```typescript
-					</CardContent>
-				</Card>
+				</CardContent>
+			</Card>
 
-				{/* Universal Agent Configurations */}
-				<AgentConfigPanel />
-
-				{/* User Secrets Section */}
-				<Card id="secrets">
+			{/* User Secrets Section */}
+			<Card id="secrets">
 ```
 
-## That's it!
+Add the AgentConfigPanel BEFORE "User Secrets Section":
 
-The AgentConfigPanel component will render as a new card between:
-- "AI Model Configurations" card (above)
-- "API Keys & Secrets" card (below)
+```typescript
+				</CardContent>
+			</Card>
+
+			{/* Universal Agent Configurations */}
+			<AgentConfigPanel />
+
+			{/* User Secrets Section */}
+			<Card id="secrets">
+```
 
 ## What You'll See
 
-A new card titled "Universal Agent Configurations" with:
-- List of all configured agents
-- Default Blueprint agent pre-installed
-- Buttons to Create/Edit/Delete/Duplicate agents
-- Agent details (category, complexity, cost estimate)
+New card "Universal Agent Configurations" with:
+- Pre-installed Blueprint agent
+- Create/Edit/Delete/Duplicate buttons
+- All 21 models in dropdown when creating agents
 
-## Next Steps
+## Models Available
 
-1. Upload these files to GitHub
-2. Cloudflare auto-deploys
-3. Go to Settings page
-4. Scroll down - you'll see the new "Universal Agent Configurations" card
+**Coding:** Qwen3 Coder, Grok Code Fast
+**Claude:** 4 Opus, 4.5 Sonnet, 4 Sonnet, 4.5 Haiku, 3.5 Sonnet
+**Gemini:** 2.5 Pro/Flash/Flash Lite, 2.0 Flash
+**GPT:** 5 Mini, 4o, 4o Mini, O1, O1 Mini
+**Reasoning:** DeepSeek R1, DeepSeek Chat v3.5
+**Other:** Mistral Large, Llama 3.3 70B
+
+Total: 21 models
